@@ -23,8 +23,6 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  app.useGlobalInterceptors(new TransformInterceptor());
-
   await app.listen(port);
 }
 bootstrap();

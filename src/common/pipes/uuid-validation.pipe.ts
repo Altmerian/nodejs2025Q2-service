@@ -1,21 +1,17 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
-import { validate as uuidValidate, version as uuidVersion } from 'uuid';
+import { isValidUuidV4 } from '../utils/uuid.utils';
 
 @Injectable()
 export class UuidValidationPipe implements PipeTransform {
   transform(value: any): string {
     if (typeof value !== 'string') {
-      throw new BadRequestException('Validation failed (uuid string is expected)');
+      throw new BadRequestException('Validation failed, ID must be a string');
     }
 
-    if (!this.isValidUuidV4(value)) {
-      throw new BadRequestException('Validation failed (uuid v4 is expected)');
+    if (!isValidUuidV4(value)) {
+      throw new BadRequestException('Validation failed, ID must be a valid UUID v4');
     }
 
     return value;
-  }
-
-  private isValidUuidV4(uuid: string): boolean {
-    return uuidValidate(uuid) && uuidVersion(uuid) === 4;
   }
 }

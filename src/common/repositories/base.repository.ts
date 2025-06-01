@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { generateUuid } from '../utils/uuid.utils';
 
 /**
  * Base repository interface defining common CRUD operations
@@ -96,7 +96,7 @@ export abstract class BaseInMemoryRepository<T extends { id: string }>
    * @returns Unique ID string
    */
   protected generateId(): string {
-    return uuidv4();
+    return generateUuid();
   }
 
   /**
