@@ -6,10 +6,10 @@ export class ConfigService {
   constructor(private readonly configService: NestConfigService) {}
 
   get port(): number {
-    return this.configService.get<number>('port');
+    return this.configService.getOrThrow<number>('port');
   }
 
   get cryptSalt(): number {
-    return this.configService.get<number>('cryptSalt');
+    return this.configService.getOrThrow<number>('cryptSalt');
   }
 }
