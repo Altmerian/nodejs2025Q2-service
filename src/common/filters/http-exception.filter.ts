@@ -1,11 +1,6 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { ReasonPhrases } from 'http-status-codes';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -21,7 +16,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const responseBody = exception.getResponse();
-      
+
       if (typeof responseBody === 'string') {
         message = responseBody;
         error = this.getErrorName(status);
@@ -34,10 +29,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
         error = this.getErrorName(status);
       }
     } else {
-       status = HttpStatus.INTERNAL_SERVER_ERROR;
-       message = 'Internal server error';
-       error = 'Internal Server Error';
-     }
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+      message = ReasonPhrases.INTERNAL_SERVER_ERROR;
+      error = ReasonPhrases.INTERNAL_SERVER_ERROR;
+    }
 
     response.status(status).json({
       statusCode: status,
@@ -51,17 +46,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private getErrorName(status: number): string {
     switch (status) {
       case HttpStatus.BAD_REQUEST:
-        return 'Bad Request';
+        return ReasonPhrases.BAD_REQUEST;
       case HttpStatus.UNAUTHORIZED:
-        return 'Unauthorized';
+        return ReasonPhrases.UNAUTHORIZED;
       case HttpStatus.FORBIDDEN:
-        return 'Forbidden';
+        return ReasonPhrases.FORBIDDEN;
       case HttpStatus.NOT_FOUND:
-        return 'Not Found';
+        return ReasonPhrases.NOT_FOUND;
       case HttpStatus.UNPROCESSABLE_ENTITY:
-        return 'Unprocessable Entity';
+        return ReasonPhrases.UNPROCESSABLE_ENTITY;
       case HttpStatus.INTERNAL_SERVER_ERROR:
-        return 'Internal Server Error';
+        return ReasonPhrases.INTERNAL_SERVER_ERROR;
       default:
         return 'Error';
     }

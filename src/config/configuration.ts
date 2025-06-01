@@ -6,7 +6,7 @@ export default () => ({
   })(),
   cryptSalt: (() => {
     const salt = parseInt(process.env.CRYPT_SALT, 10);
-    if (isNaN(salt) || salt < 1) return 12;
+    if (isNaN(salt) || salt < 1) return 10;
     return salt;
   })(),
 });
