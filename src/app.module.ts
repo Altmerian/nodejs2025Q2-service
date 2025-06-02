@@ -5,12 +5,14 @@ import { AppService } from './app.service';
 import { ConfigModule } from './config/config.module';
 import { CommonModule } from './common/common.module';
 import { UserModule } from './user/user.module';
+import { ArtistModule } from './artist/artist.module';
 
 @Module({
   imports: [
     ConfigModule,
     CommonModule,
     UserModule,
+    ArtistModule,
     EventEmitterModule.forRoot({
       // Configuration options
       wildcard: false,
