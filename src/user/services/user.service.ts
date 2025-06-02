@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException, ConflictException, Logger } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
 import { PasswordService, ERROR_MESSAGES, getEntityNotFoundMessage, getEntitySuccessMessage } from '../../common';
-import { User } from '../interfaces/user.interface';
+import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { UserResponseDto } from '../dto/user-response.dto';

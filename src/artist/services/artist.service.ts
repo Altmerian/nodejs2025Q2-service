@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { ArtistRepository } from '../repositories/artist.repository';
 import { EventService, getEntityNotFoundMessage, getEntitySuccessMessage } from '../../common';
-import { Artist } from '../interfaces/artist.interface';
+import { Artist } from '../entities/artist.entity';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
 

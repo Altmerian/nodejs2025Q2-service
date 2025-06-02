@@ -1,6 +1,6 @@
-import { Artist } from '../../artist/interfaces/artist.interface';
-import { Album } from '../../album/interfaces/album.interface';
-import { Track } from '../../track/interfaces/track.interface';
+import { Artist } from '../../artist/entities/artist.entity';
+import { Album } from '../../album/entities/album.entity';
+import { Track } from '../../track/entities/track.entity';
 
 export class FavoritesResponseDto {
   artists: Artist[];

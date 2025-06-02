@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BaseInMemoryRepository } from '../../common/repositories/base.repository';
-import { Artist } from '../interfaces/artist.interface';
+import { Artist } from '../entities/artist.entity';
 
 @Injectable()
 export class ArtistRepository extends BaseInMemoryRepository<Artist> {

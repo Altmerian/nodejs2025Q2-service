@@ -7,10 +7,12 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { FavoritesService } from './services/favorites.service';
 import { FavoritesResponseDto } from './dto/favorites-response.dto';
 import { UuidValidationPipe } from '../common/pipes/uuid-validation.pipe';
 
+@ApiTags('Favorites')
 @Controller('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}

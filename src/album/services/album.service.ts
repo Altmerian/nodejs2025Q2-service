@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AlbumRepository } from '../repositories/album.repository';
-import { Album } from '../interfaces/album.interface';
+import { Album } from '../entities/album.entity';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 import { UpdateAlbumDto } from '../dto/update-album.dto';
 import { EventService, ArtistDeletedEvent } from '../../common/services/event.service';

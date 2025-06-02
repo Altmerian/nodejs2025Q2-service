@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Album } from '../interfaces/album.interface';
+import { Album } from '../entities/album.entity';
 import { BaseInMemoryRepository } from '../../common/repositories/base.repository';
 
 @Injectable()

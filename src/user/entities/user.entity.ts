@@ -1,7 +1,6 @@
-import { Exclude } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UserResponseDto {
+export class User {
   @ApiProperty({
     description: 'User unique identifier',
     format: 'uuid',
@@ -14,11 +13,13 @@ export class UserResponseDto {
     example: 'TestUser'
   })
   login: string;
-  
-  @Exclude()
-  @ApiProperty({ writeOnly: true })
+
+  @ApiProperty({
+    description: 'User password (excluded from responses)',
+    writeOnly: true
+  })
   password: string;
-  
+
   @ApiProperty({
     description: 'User version number, increments on update',
     example: 1
@@ -36,8 +37,4 @@ export class UserResponseDto {
     example: 1655000000
   })
   updatedAt: number;
-
-  constructor(partial: Partial<UserResponseDto>) {
-    Object.assign(this, partial);
-  }
 }
