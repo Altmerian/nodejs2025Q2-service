@@ -25,4 +25,22 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['test/**/*.ts'],
+      parserOptions: {
+        project: null,
+        sourceType: 'module',
+      },
+      rules: {
+        // Disable rules that require type information for test files
+        '@typescript-eslint/no-floating-promises': 'off',
+        '@typescript-eslint/no-misused-promises': 'off',
+        '@typescript-eslint/require-await': 'off',
+        '@typescript-eslint/prefer-promise-reject-errors': 'off',
+        // Disable Prettier formatting rules for /test folder
+        'prettier/prettier': 'off',
+      },
+    },
+  ],
 };

@@ -6,9 +6,9 @@ export interface EntityDeletedEvent {
   id: string;
 }
 
-export interface ArtistDeletedEvent extends EntityDeletedEvent {}
-export interface AlbumDeletedEvent extends EntityDeletedEvent {}
-export interface TrackDeletedEvent extends EntityDeletedEvent {}
+export type ArtistDeletedEvent = EntityDeletedEvent;
+export type AlbumDeletedEvent = EntityDeletedEvent;
+export type TrackDeletedEvent = EntityDeletedEvent;
 
 @Injectable()
 export class EventService {

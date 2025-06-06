@@ -1,20 +1,11 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { FavoritesRepository } from '../repositories/favorites.repository';
 import { FavoritesResponseDto } from '../dto/favorites-response.dto';
 import { ArtistService } from '../../artist/services/artist.service';
 import { AlbumService } from '../../album/services/album.service';
 import { TrackService } from '../../track/services/track.service';
-import {
-  ArtistDeletedEvent,
-  AlbumDeletedEvent,
-  TrackDeletedEvent,
-} from '../../common/services/event.service';
+import { ArtistDeletedEvent, AlbumDeletedEvent, TrackDeletedEvent } from '../../common/services/event.service';
 import { EVENTS } from '../../common/constants/events';
 import { getEntityNotFoundMessage } from '../../common/constants/messages';
 
@@ -34,47 +25,47 @@ export class FavoritesService {
    */
   async getFavorites(): Promise<FavoritesResponseDto> {
     this.logger.log('Getting all favorites');
-    
+
     const favorites = await this.favoritesRepository.findAll();
-    
+
     // Resolve full entities
     const artists = await Promise.all(
       favorites.artists.map(async (artistId) => {
         try {
           return await this.artistService.findById(artistId);
-        } catch (error) {
+        } catch {
           this.logger.warn(`Artist ${artistId} not found in favorites, skipping`);
           return null;
         }
-      })
+      }),
     );
 
     const albums = await Promise.all(
       favorites.albums.map(async (albumId) => {
         try {
           return await this.albumService.findById(albumId);
-        } catch (error) {
+        } catch {
           this.logger.warn(`Album ${albumId} not found in favorites, skipping`);
           return null;
         }
-      })
+      }),
     );
 
     const tracks = await Promise.all(
       favorites.tracks.map(async (trackId) => {
         try {
           return await this.trackService.findById(trackId);
-        } catch (error) {
+        } catch {
           this.logger.warn(`Track ${trackId} not found in favorites, skipping`);
           return null;
         }
-      })
+      }),
     );
 
     return new FavoritesResponseDto({
-      artists: artists.filter(artist => artist !== null),
-      albums: albums.filter(album => album !== null),
-      tracks: tracks.filter(track => track !== null),
+      artists: artists.filter((artist) => artist !== null),
+      albums: albums.filter((album) => album !== null),
+      tracks: tracks.filter((track) => track !== null),
     });
   }
 
@@ -83,20 +74,18 @@ export class FavoritesService {
    */
   async addArtist(artistId: string): Promise<void> {
     this.logger.log(`Adding artist ${artistId} to favorites`);
-    
+
     // Check if artist exists
     try {
       await this.artistService.findById(artistId);
-    } catch (error) {
+    } catch {
       this.logger.warn(`Artist ${artistId} not found`);
-      throw new UnprocessableEntityException(
-        getEntityNotFoundMessage('Artist', artistId)
-      );
+      throw new UnprocessableEntityException(getEntityNotFoundMessage('Artist', artistId));
     }
 
     // Add to favorites (repository handles duplicate check)
     const added = await this.favoritesRepository.addArtist(artistId);
-    
+
     if (!added) {
       this.logger.log(`Artist ${artistId} already in favorites`);
     } else {
@@ -109,16 +98,14 @@ export class FavoritesService {
    */
   async removeArtist(artistId: string): Promise<void> {
     this.logger.log(`Removing artist ${artistId} from favorites`);
-    
+
     const removed = await this.favoritesRepository.removeArtist(artistId);
-    
+
     if (!removed) {
       this.logger.warn(`Artist ${artistId} not in favorites`);
-      throw new NotFoundException(
-        `Artist with id ${artistId} is not favorite`
-      );
+      throw new NotFoundException(`Artist with id ${artistId} is not favorite`);
     }
-    
+
     this.logger.log(`Artist ${artistId} removed from favorites`);
   }
 
@@ -127,20 +114,18 @@ export class FavoritesService {
    */
   async addAlbum(albumId: string): Promise<void> {
     this.logger.log(`Adding album ${albumId} to favorites`);
-    
+
     // Check if album exists
     try {
       await this.albumService.findById(albumId);
-    } catch (error) {
+    } catch {
       this.logger.warn(`Album ${albumId} not found`);
-      throw new UnprocessableEntityException(
-        getEntityNotFoundMessage('Album', albumId)
-      );
+      throw new UnprocessableEntityException(getEntityNotFoundMessage('Album', albumId));
     }
 
     // Add to favorites
     const added = await this.favoritesRepository.addAlbum(albumId);
-    
+
     if (!added) {
       this.logger.log(`Album ${albumId} already in favorites`);
     } else {
@@ -153,16 +138,14 @@ export class FavoritesService {
    */
   async removeAlbum(albumId: string): Promise<void> {
     this.logger.log(`Removing album ${albumId} from favorites`);
-    
+
     const removed = await this.favoritesRepository.removeAlbum(albumId);
-    
+
     if (!removed) {
       this.logger.warn(`Album ${albumId} not in favorites`);
-      throw new NotFoundException(
-        `Album with id ${albumId} is not favorite`
-      );
+      throw new NotFoundException(`Album with id ${albumId} is not favorite`);
     }
-    
+
     this.logger.log(`Album ${albumId} removed from favorites`);
   }
 
@@ -171,20 +154,18 @@ export class FavoritesService {
    */
   async addTrack(trackId: string): Promise<void> {
     this.logger.log(`Adding track ${trackId} to favorites`);
-    
+
     // Check if track exists
     try {
       await this.trackService.findById(trackId);
-    } catch (error) {
+    } catch {
       this.logger.warn(`Track ${trackId} not found`);
-      throw new UnprocessableEntityException(
-        getEntityNotFoundMessage('Track', trackId)
-      );
+      throw new UnprocessableEntityException(getEntityNotFoundMessage('Track', trackId));
     }
 
     // Add to favorites
     const added = await this.favoritesRepository.addTrack(trackId);
-    
+
     if (!added) {
       this.logger.log(`Track ${trackId} already in favorites`);
     } else {
@@ -197,16 +178,14 @@ export class FavoritesService {
    */
   async removeTrack(trackId: string): Promise<void> {
     this.logger.log(`Removing track ${trackId} from favorites`);
-    
+
     const removed = await this.favoritesRepository.removeTrack(trackId);
-    
+
     if (!removed) {
       this.logger.warn(`Track ${trackId} not in favorites`);
-      throw new NotFoundException(
-        `Track with id ${trackId} is not favorite`
-      );
+      throw new NotFoundException(`Track with id ${trackId} is not favorite`);
     }
-    
+
     this.logger.log(`Track ${trackId} removed from favorites`);
   }
 

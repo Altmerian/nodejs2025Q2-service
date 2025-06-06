@@ -19,7 +19,7 @@ export class UserService {
     this.logger.log('Fetching all users');
     const users = await this.userRepository.findAll();
     this.logger.log(`Found ${users.length} users`);
-    return users.map(user => new UserResponseDto(user));
+    return users.map((user) => new UserResponseDto(user));
   }
 
   async findById(id: string): Promise<UserResponseDto> {
@@ -35,7 +35,7 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     this.logger.log(`Creating new user with login: ${createUserDto.login}`);
-    
+
     const existingUser = await this.userRepository.findByLogin(createUserDto.login);
     if (existingUser) {
       this.logger.warn(`User with login ${createUserDto.login} already exists`);
@@ -60,17 +60,14 @@ export class UserService {
 
   async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): Promise<UserResponseDto> {
     this.logger.log(`Updating password for user with id: ${id}`);
-    
+
     const user = await this.userRepository.findById(id);
     if (!user) {
       this.logger.warn(getEntityNotFoundMessage('User', id));
       throw new NotFoundException(getEntityNotFoundMessage('User', id));
     }
 
-    const isPasswordValid = await this.passwordService.verifyPassword(
-      updatePasswordDto.oldPassword,
-      user.password,
-    );
+    const isPasswordValid = await this.passwordService.verifyPassword(updatePasswordDto.oldPassword, user.password);
 
     if (!isPasswordValid) {
       this.logger.warn(`Invalid password attempt for user with id: ${id}`);
@@ -78,7 +75,7 @@ export class UserService {
     }
 
     const hashedNewPassword = await this.passwordService.hashPassword(updatePasswordDto.newPassword);
-    
+
     const updatedUser = await this.userRepository.update(id, {
       password: hashedNewPassword,
       version: user.version + 1,
@@ -96,13 +93,13 @@ export class UserService {
 
   async delete(id: string): Promise<void> {
     this.logger.log(`Deleting user with id: ${id}`);
-    
+
     const deleted = await this.userRepository.delete(id);
     if (!deleted) {
       this.logger.warn(getEntityNotFoundMessage('User', id));
       throw new NotFoundException(getEntityNotFoundMessage('User', id));
     }
-    
+
     this.logger.log(getEntitySuccessMessage('User', 'deleted', id));
   }
 }

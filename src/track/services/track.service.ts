@@ -27,88 +27,88 @@ export class TrackService {
   async findById(id: string): Promise<Track> {
     this.logger.log(`Finding track with id: ${id}`);
     const track = await this.trackRepository.findById(id);
-    
+
     if (!track) {
       this.logger.warn(`Track with id ${id} not found`);
       throw new NotFoundException(getEntityNotFoundMessage('Track', id));
     }
-    
+
     this.logger.log(`Found track: ${track.name}`);
     return track;
   }
 
   async create(createTrackDto: CreateTrackDto): Promise<Track> {
     this.logger.log(`Creating new track: ${createTrackDto.name}`);
-    
+
     const trackData: Omit<Track, 'id'> = {
       name: createTrackDto.name,
       duration: createTrackDto.duration,
       artistId: createTrackDto.artistId || null,
       albumId: createTrackDto.albumId || null,
     };
-    
+
     const newTrack = await this.trackRepository.create(trackData);
     this.logger.log(`Track created successfully with id: ${newTrack.id}`);
-    
+
     return newTrack;
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
     this.logger.log(`Updating track with id: ${id}`);
-    
+
     await this.findById(id);
-    
+
     const updatedData: Partial<Track> = Object.fromEntries(
-      Object.entries(updateTrackDto).filter(([_, value]) => value !== undefined)
+      Object.entries(updateTrackDto).filter(([, value]) => value !== undefined),
     );
-    
+
     const updatedTrack = await this.trackRepository.update(id, updatedData);
-    
+
     if (!updatedTrack) {
       throw new NotFoundException(getEntityNotFoundMessage('Track', id));
     }
-    
+
     this.logger.log(`Track ${id} updated successfully`);
     return updatedTrack;
   }
 
   async delete(id: string): Promise<void> {
     this.logger.log(`Deleting track with id: ${id}`);
-    
+
     await this.findById(id); // Verify track exists
-    
+
     await this.trackRepository.delete(id);
-    
+
     this.eventService.emitTrackDeleted({ id });
-    
+
     this.logger.log(getEntitySuccessMessage('Track', 'deleted', id));
   }
 
   async updateArtistReference(artistId: string): Promise<void> {
     this.logger.log(`Updating artist references for deleted artist: ${artistId}`);
-    
+
     const tracks = await this.trackRepository.findAll();
-    const tracksToUpdate = tracks.filter(track => track.artistId === artistId);
-    
+    const tracksToUpdate = tracks.filter((track) => track.artistId === artistId);
+
     for (const track of tracksToUpdate) {
       await this.trackRepository.update(track.id, { artistId: null });
       this.logger.log(`Updated track ${track.id} - removed artist reference`);
     }
-    
+
     this.logger.log(`Updated ${tracksToUpdate.length} tracks`);
   }
 
   async updateAlbumReference(albumId: string): Promise<void> {
     this.logger.log(`Updating album references for deleted album: ${albumId}`);
-    
+
     const tracks = await this.trackRepository.findAll();
-    const tracksToUpdate = tracks.filter(track => track.albumId === albumId);
-    
+    const tracksToUpdate = tracks.filter((track) => track.albumId === albumId);
+
     for (const track of tracksToUpdate) {
       await this.trackRepository.update(track.id, { albumId: null });
       this.logger.log(`Updated track ${track.id} - removed album reference`);
     }
-    
+
     this.logger.log(`Updated ${tracksToUpdate.length} tracks`);
   }
 

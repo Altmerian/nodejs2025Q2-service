@@ -29,7 +29,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Successful operation',
-    type: [UserResponseDto]
+    type: [UserResponseDto],
   })
   async findAll(): Promise<UserResponseDto[]> {
     return this.userService.findAll();
@@ -41,15 +41,15 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Successful operation',
-    type: UserResponseDto
+    type: UserResponseDto,
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request. userId is invalid (not uuid)'
+    description: 'Bad request. userId is invalid (not uuid)',
   })
   @ApiResponse({
     status: 404,
-    description: 'User not found'
+    description: 'User not found',
   })
   async findById(@Param('id', UuidValidationPipe) id: string): Promise<UserResponseDto> {
     return this.userService.findById(id);
@@ -61,11 +61,11 @@ export class UserController {
   @ApiResponse({
     status: 201,
     description: 'The user has been created.',
-    type: UserResponseDto
+    type: UserResponseDto,
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request. body does not contain required fields'
+    description: 'Bad request. body does not contain required fields',
   })
   async create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     return this.userService.create(createUserDto);
@@ -77,19 +77,19 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'The user has been updated.',
-    type: UserResponseDto
+    type: UserResponseDto,
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request. userId is invalid (not uuid)'
+    description: 'Bad request. userId is invalid (not uuid)',
   })
   @ApiResponse({
     status: 403,
-    description: 'oldPassword is wrong'
+    description: 'oldPassword is wrong',
   })
   @ApiResponse({
     status: 404,
-    description: 'User not found'
+    description: 'User not found',
   })
   async updatePassword(
     @Param('id', UuidValidationPipe) id: string,
@@ -104,15 +104,15 @@ export class UserController {
   @ApiParam({ name: 'id', description: 'User ID', format: 'uuid' })
   @ApiResponse({
     status: 204,
-    description: 'The user has been deleted'
+    description: 'The user has been deleted',
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request. userId is invalid (not uuid)'
+    description: 'Bad request. userId is invalid (not uuid)',
   })
   @ApiResponse({
     status: 404,
-    description: 'User not found'
+    description: 'User not found',
   })
   async delete(@Param('id', UuidValidationPipe) id: string): Promise<void> {
     await this.userService.delete(id);
