@@ -36,6 +36,8 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+security-audit.log
+docker-scan.log
 
 # Environment files (will be provided via docker-compose)
 .env
@@ -53,3 +55,14 @@ Dockerfile.postgres
 docker-compose.yml
 docker-compose.dev.yml
 .dockerignore
+
+# Additional files to exclude
+*.md
+LICENSE
+.npmrc
+.nvmrc
+*.swp
+*.swo
+*~
+.git-rewrite/
+.tmp/

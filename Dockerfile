@@ -5,14 +5,16 @@ FROM node:22.14-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files first for better caching
 COPY package*.json ./
 
 # Install all dependencies (including devDependencies for building)
 RUN npm ci
 
-# Copy source code
-COPY . .
+# Copy TypeScript configuration and source code
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
+COPY src ./src
 
 # Build the application
 RUN npm run build
@@ -33,15 +35,13 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install only production dependencies
+# Install only production dependencies and clean cache in same layer
 RUN npm ci --only=production && \
-    npm cache clean --force
+    npm cache clean --force && \
+    rm -rf /tmp/*
 
 # Copy built application from builder stage
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-
-# Copy any necessary configuration files
-COPY --chown=nodejs:nodejs nest-cli.json ./
 
 # Switch to non-root user
 USER nodejs

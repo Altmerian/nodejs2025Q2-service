@@ -30,7 +30,15 @@
     "docker:down": "docker-compose down",
     "docker:down:dev": "docker-compose -f docker-compose.dev.yml down",
     "docker:logs": "docker-compose logs -f",
-    "docker:logs:dev": "docker-compose -f docker-compose.dev.yml logs -f"
+    "docker:logs:dev": "docker-compose -f docker-compose.dev.yml logs -f",
+    "docker:build:prod": "bash -c 'docker build -t ${DOCKER_USERNAME}/home-library-app:latest -t ${DOCKER_USERNAME}/home-library-app:$(date +%Y%m%d-%H%M%S) .'",
+    "docker:push": "bash -c 'docker push ${DOCKER_USERNAME}/home-library-app:latest'",
+    "docker:push:tagged": "bash -c 'docker push ${DOCKER_USERNAME}/home-library-app --all-tags'",
+    "docker:deploy": "npm run docker:build:prod && npm run docker:push:tagged",
+    "security:audit": "npm audit --audit-level=moderate",
+    "security:scan": "docker scout cves altmerian/home-library-app:latest",
+    "security:check": "npm run security:audit; npm run security:scan",
+    "security:report": "mkdir -p logs && npm run security:audit > logs/security-audit.log 2>&1; docker scout cves altmerian/home-library-app:latest > logs/docker-scan.log 2>&1; echo 'Security reports generated in logs/ directory'"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.16",
