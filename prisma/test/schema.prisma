@@ -1,14 +1,20 @@
+// Test schema for SQLite - Auto-generated from schema.prisma
+// DO NOT EDIT MANUALLY - Run npm run schema:sync-test
+// Using flexible string fields for entity references (no FK constraints)
+// This maintains existing event-driven cascading behavior
+
 // Home Library Service Prisma Schema
 // Using flexible string fields for entity references (no FK constraints)
 // This maintains existing event-driven cascading behavior
 
 generator client {
   provider = "prisma-client-js"
+  output = "../node_modules/.prisma/client-test"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file::memory:?cache=shared"
 }
 
 model User {
@@ -51,9 +57,9 @@ model Track {
 
 model Favorites {
   id      String   @id @default("singleton")
-  artists String[]
-  albums  String[]
-  tracks  String[]
+  artists String   @default("[]") // JSON array as string for SQLite
+  albums String   @default("[]") // JSON array as string for SQLite
+  tracks String   @default("[]") // JSON array as string for SQLite
   
   @@map("favorites")
 }

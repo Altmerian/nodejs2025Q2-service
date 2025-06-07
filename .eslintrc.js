@@ -12,7 +12,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js'],
+  ignorePatterns: ['.eslintrc.js', '**/prisma/test/**', 'scripts/sync-test-schema.js'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -40,6 +40,16 @@ module.exports = {
         '@typescript-eslint/prefer-promise-reject-errors': 'off',
         // Disable Prettier formatting rules for /test folder
         'prettier/prettier': 'off',
+      },
+    },
+    {
+      files: ['**/*.integration.spec.ts'],
+      parserOptions: {
+        project: './tsconfig.json',
+        sourceType: 'module',
+      },
+      rules: {
+        // Integration tests use TypeScript project config
       },
     },
   ],

@@ -1,0 +1,15 @@
+# Auto-generated files
+prisma/test/
+scripts/sync-test-schema.js
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
+
+# Coverage
+coverage/
+
+# Logs
+*.log

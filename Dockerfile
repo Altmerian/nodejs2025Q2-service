@@ -14,10 +14,11 @@ RUN npm ci
 # Copy TypeScript configuration and source code
 COPY tsconfig*.json ./
 COPY nest-cli.json ./
+COPY prisma ./prisma
 COPY src ./src
 
-# Build the application
-RUN npm run build
+# Generate Prisma client and build the application
+RUN npx prisma generate && npm run build
 
 # Production stage
 FROM node:22.14-alpine AS production
@@ -35,8 +36,12 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
+# Copy Prisma schema for client generation
+COPY prisma ./prisma
+
 # Install only production dependencies and clean cache in same layer
 RUN npm ci --only=production && \
+    npx prisma generate && \
     npm cache clean --force && \
     rm -rf /tmp/*
 
