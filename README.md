@@ -3,7 +3,9 @@
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager (v22.14.0 or higher).
+- Docker - [Download & Install Docker](https://docs.docker.com/engine/install/) (for containerized deployment).
+- Docker Compose - [Download & Install Docker Compose](https://docs.docker.com/compose/install/) (v2.0 or higher).
 
 ## Downloading
 
@@ -11,19 +13,58 @@
 git clone {repository URL}
 ```
 
-## Installing NPM modules
+## Running with Docker (Recommended)
+
+check [DOCKER.md](./DOCKER.md) for detailed instructions.
+
+### Quick Start - Development
+
+```bash
+# Copy environment variables
+cp .env.example .env
+
+# Build and start development containers
+npm run docker:build:dev
+npm run docker:up:dev
+
+# Application will be available at http://localhost:4000
+# View logs
+npm run docker:logs:dev
+
+# Stop containers
+npm run docker:down:dev
+```
+
+### Production Deployment
+
+```bash
+# Edit .env with your production values
+
+# Build and start production containers
+npm run docker:build
+npm run docker:up
+
+# Stop containers
+npm run docker:down
+```
+
+For detailed Docker instructions, see [DOCKER.md](./DOCKER.md).
+
+## Running without Docker (Development)
+
+### Installing NPM modules
 
 ```
 npm install
 ```
 
-## Building application
+### Building application
 
 ```
 npm run build
 ```
 
-## Running application
+### Running application
 
 ```
 npm start
