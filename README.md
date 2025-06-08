@@ -50,7 +50,7 @@ npm run docker:down
 
 For detailed Docker instructions, see [DOCKER.md](./DOCKER.md).
 
-## Running without Docker (Development)
+## Running without Docker (Development, requires PostgreSQL on port 5432)
 
 ### Installing NPM modules
 
@@ -88,31 +88,55 @@ npm run build
 
 ## Testing
 
-After application running open new terminal and enter:
+**Important**: Tests require a clean database state. If tests fail with 409 Conflict errors, clear the database first.
 
-To run all tests without authorization
+### Prerequisites for Testing
+- Application must be running (use Docker or local setup)
+- Database should be in clean state for reliable test results
 
-```
+### Test Commands
+
+```bash
+# Run all tests without authorization
 npm run test
-```
 
-To run only one of all test suites
-
-```
+# Run specific test suite
 npm run test -- <path to suite>
-```
 
-To run all test with authorization
-
-```
+# Run all tests with authorization (currently not implemented)
 npm run test:auth
-```
 
-To run only specific test suite with authorization
-
-```
+# Run specific test suite with authorization
 npm run test:auth -- <path to suite>
 ```
+
+### Database Testing Notes
+
+**PostgreSQL Data Persistence**: Unlike in-memory storage, PostgreSQL retains data between test runs. This can cause:
+- **409 Conflict errors** when tests try to create users with existing logins
+- **Test failures** due to unexpected existing data
+- **Inconsistent test results** without proper cleanup
+
+**Before Running Tests**: If you encounter 409 Conflict errors or test failures, clear the database:
+
+```bash
+# Reset database to clean state (removes all data and reapplies migrations)
+npm run db:reset
+
+# Quick reset without confirmation (recommended for development)
+npm run db:reset:force
+
+# Alternative: manually delete test data via API endpoints
+# Example: DELETE http://localhost:4000/user/{id}
+```
+
+### Test Troubleshooting
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| 409 Conflict | Existing user with same login | `npm run db:reset` |
+| Connection refused | Application not running | Start with `npm run docker:up:dev` |
+| Database errors | Schema out of sync | `npm run db:reset` |
 
 ## Database Scripts
 
@@ -135,19 +159,38 @@ npm run db:migrate
 # Push schema changes to database (prototyping)
 npm run db:push
 
-# Reset database and apply all migrations
+# Reset database and apply all migrations (⚠️  REMOVES ALL DATA)
 npm run db:reset
 
-# Seed database with sample data
+# Seed database with sample data (if seed script exists)
 npm run db:seed
 
 # Open Prisma Studio (database browser)
 npm run db:studio
 ```
 
-**Note**: Database scripts require PostgreSQL connection except for `db:clean`.
+### Database Management
 
-**Important**: All `start` scripts automatically run database migrations before starting the application. Use `start:prod:no-migrate` if you need to skip migrations.
+```bash
+# Clear all data and reset to clean state (recommended before testing)
+npm run db:reset
+
+# Clear database without confirmation prompt (for scripts/automation)
+npm run db:reset:force
+
+# Deploy migrations only (production-safe)
+npm run db:migrate:deploy
+
+# Generate Prisma client after schema changes
+npm run db:generate
+```
+
+**⚠️ Important Notes**:
+- Database scripts require PostgreSQL connection except for `db:clean`
+- `db:reset` **REMOVES ALL DATA** - use with caution
+- All `start` scripts automatically run database migrations before starting
+- Use `start:prod:no-migrate` if you need to skip migrations
+- For testing, always start with a clean database using `npm run db:reset`
 
 ### Auto-fix and format
 

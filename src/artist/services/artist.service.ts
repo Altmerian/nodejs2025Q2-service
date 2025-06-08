@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
-import { ArtistRepository } from '../repositories/artist.repository';
+import { PrismaArtistRepository } from '../repositories/prisma-artist.repository';
 import { EventService, getEntityNotFoundMessage, getEntitySuccessMessage } from '../../common';
 import { Artist } from '../entities/artist.entity';
 import { CreateArtistDto } from '../dto/create-artist.dto';
@@ -10,7 +10,7 @@ export class ArtistService {
   private readonly logger = new Logger(ArtistService.name);
 
   constructor(
-    private readonly artistRepository: ArtistRepository,
+    private readonly artistRepository: PrismaArtistRepository,
     private readonly eventService: EventService,
   ) {}
 

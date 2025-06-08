@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, ForbiddenException, ConflictException, Logger } from '@nestjs/common';
-import { UserRepository } from '../repositories/user.repository';
+import { PrismaUserRepository } from '../repositories/prisma-user.repository';
 import { PasswordService, ERROR_MESSAGES, getEntityNotFoundMessage, getEntitySuccessMessage } from '../../common';
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -11,7 +11,7 @@ export class UserService {
   private readonly logger = new Logger(UserService.name);
 
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly userRepository: PrismaUserRepository,
     private readonly passwordService: PasswordService,
   ) {}
 
