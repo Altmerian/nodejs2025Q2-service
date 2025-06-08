@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { FavoritesRepository } from '../repositories/favorites.repository';
+import { PrismaFavoritesRepository } from '../repositories/prisma-favorites.repository';
 import { FavoritesResponseDto } from '../dto/favorites-response.dto';
 import { ArtistService } from '../../artist/services/artist.service';
 import { AlbumService } from '../../album/services/album.service';
@@ -14,7 +14,7 @@ export class FavoritesService {
   private readonly logger = new Logger(FavoritesService.name);
 
   constructor(
-    private readonly favoritesRepository: FavoritesRepository,
+    private readonly favoritesRepository: PrismaFavoritesRepository,
     private readonly artistService: ArtistService,
     private readonly albumService: AlbumService,
     private readonly trackService: TrackService,
