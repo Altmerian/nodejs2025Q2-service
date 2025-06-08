@@ -42,15 +42,5 @@ module.exports = {
         'prettier/prettier': 'off',
       },
     },
-    {
-      files: ['**/*.integration.spec.ts'],
-      parserOptions: {
-        project: './tsconfig.json',
-        sourceType: 'module',
-      },
-      rules: {
-        // Integration tests use TypeScript project config
-      },
-    },
   ],
 };

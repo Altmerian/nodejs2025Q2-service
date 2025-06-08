@@ -36,7 +36,7 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Copy Prisma schema for client generation
+# Copy Prisma schema and migrations for runtime
 COPY prisma ./prisma
 
 # Install only production dependencies and clean cache in same layer
@@ -57,5 +57,5 @@ EXPOSE 4000
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the application
-CMD ["node", "dist/main"]
+# Start the application with migrations
+CMD ["npm", "run", "start:prod"]

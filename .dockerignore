@@ -60,7 +60,6 @@ docker-compose.dev.yml
 *.md
 LICENSE
 .npmrc
-.nvmrc
 *.swp
 *.swo
 *~

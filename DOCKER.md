@@ -1,6 +1,9 @@
 # Docker Setup Instructions
 
 This document provides minimal instructions for running the Home Library Service using Docker.
+There are two Docker Compose files:
+- `docker-compose.dev.yml` for development (uses `Dockerfile.dev` with hot reloading support)
+- `docker-compose.yml` for production (uses `Dockerfile` for optimized image size <500MB)
 
 ## Prerequisites
 
@@ -24,8 +27,16 @@ This document provides minimal instructions for running the Home Library Service
    ```
 
 3. The application will be available at http://localhost:4000
+   - Database migrations run automatically on startup
+   - Hot reloading is enabled for development
+   - Prisma client is generated during build
 
-4. Stop the containers:
+4. Run tests against the running containers:
+   ```bash
+   npm run test
+   ```
+
+5. Stop the containers:
    ```bash
    npm run docker:down:dev
    ```
@@ -64,6 +75,18 @@ POSTGRES_PORT=5432
 # Security
 CRYPT_SALT=10
 ```
+
+## Important Notes
+
+### Database Migrations
+- All `npm start` commands automatically run `prisma migrate deploy` before starting
+- Migrations are applied safely in production mode (no schema changes)
+- To skip migrations, use `npm run start:prod:no-migrate`
+
+### Build Process
+- The build process includes `npm run db:generate` to ensure Prisma client is available
+- Development uses `Dockerfile.dev` with hot reloading support
+- Production uses multi-stage `Dockerfile` for optimized image size (<500MB)
 
 ## Docker Hub Deployment
 

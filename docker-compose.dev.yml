@@ -31,8 +31,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: builder  # Use builder stage for development
+      dockerfile: Dockerfile.dev
     image: altmerian/home-library-app:dev
     container_name: home-library-app-dev
     restart: unless-stopped

@@ -88,46 +88,29 @@ npm run build
 
 ## Testing
 
-### Integration Tests (Recommended)
+After application running open new terminal and enter:
 
-Fast SQLite in-memory tests for unit/integration testing:
+To run all tests without authorization
 
-```bash
-npm run test:integration
 ```
-
-This command automatically:
-- Cleans all generated files
-- Syncs test schema from main schema
-- Generates Prisma clients
-- Runs tests in isolated SQLite in-memory database
-
-### End-to-End Tests
-
-**Note**: Requires running application server first.
-
-To run all e2e tests without authorization:
-
-```bash
-npm run start:dev &
 npm run test
 ```
 
-To run only one test suite:
+To run only one of all test suites
 
-```bash
+```
 npm run test -- <path to suite>
 ```
 
-To run all tests with authorization:
+To run all test with authorization
 
-```bash
+```
 npm run test:auth
 ```
 
-To run specific test suite with authorization:
+To run only specific test suite with authorization
 
-```bash
+```
 npm run test:auth -- <path to suite>
 ```
 
@@ -138,9 +121,6 @@ npm run test:auth -- <path to suite>
 ```bash
 # Generate Prisma client from schema
 npm run db:generate
-
-# Sync test schema from main schema (auto-generated)
-npm run schema:sync-test
 
 # Clean generated files (Prisma clients)
 npm run db:clean
@@ -165,7 +145,9 @@ npm run db:seed
 npm run db:studio
 ```
 
-**Note**: Database scripts require PostgreSQL connection except for `db:clean` and `schema:sync-test`.
+**Note**: Database scripts require PostgreSQL connection except for `db:clean`.
+
+**Important**: All `start` scripts automatically run database migrations before starting the application. Use `start:prod:no-migrate` if you need to skip migrations.
 
 ### Auto-fix and format
 

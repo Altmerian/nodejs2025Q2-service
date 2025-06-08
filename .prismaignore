@@ -1,2 +1,0 @@
-# Ignore test schema to avoid conflicts with main schema
-prisma/test/schema.prisma

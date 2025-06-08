@@ -6,7 +6,7 @@ import { PrismaClient } from '@prisma/client';
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(configService: ConfigService) {
     super({
       datasources: {
         db: {
@@ -33,20 +33,5 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     this.logger.log('Disconnecting from database...');
     await this.$disconnect();
     this.logger.log('Disconnected from database');
-  }
-
-  async cleanDatabase() {
-    if (this.configService.get('nodeEnv') === 'test') {
-      this.logger.log('Cleaning database for tests...');
-
-      // Delete in correct order to avoid constraint issues
-      await this.favorites.deleteMany();
-      await this.track.deleteMany();
-      await this.album.deleteMany();
-      await this.artist.deleteMany();
-      await this.user.deleteMany();
-
-      this.logger.log('Database cleaned');
-    }
   }
 }
