@@ -71,7 +71,7 @@ export class ArtistService {
     await this.artistRepository.delete(id);
 
     // Emit delete event for cascading operations
-    this.eventService.emitArtistDeleted({ id });
+    await this.eventService.emitArtistDeleted({ id });
 
     this.logger.log(getEntitySuccessMessage('Artist', 'deleted', id));
   }

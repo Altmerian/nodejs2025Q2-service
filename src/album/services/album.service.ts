@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { AlbumRepository } from '../repositories/album.repository';
+import { PrismaAlbumRepository } from '../repositories/prisma-album.repository';
 import { Album } from '../entities/album.entity';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 import { UpdateAlbumDto } from '../dto/update-album.dto';
@@ -13,7 +13,7 @@ export class AlbumService {
   private readonly logger = new Logger(AlbumService.name);
 
   constructor(
-    private readonly albumRepository: AlbumRepository,
+    private readonly albumRepository: PrismaAlbumRepository,
     private readonly eventService: EventService,
   ) {}
 
@@ -78,7 +78,7 @@ export class AlbumService {
 
     await this.albumRepository.delete(id);
 
-    this.eventService.emitAlbumDeleted({ id });
+    await this.eventService.emitAlbumDeleted({ id });
 
     this.logger.log(getEntitySuccessMessage('Album', 'deleted', id));
   }

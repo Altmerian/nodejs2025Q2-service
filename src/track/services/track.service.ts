@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { TrackRepository } from '../repositories/track.repository';
+import { PrismaTrackRepository } from '../repositories/prisma-track.repository';
 import { Track } from '../entities/track.entity';
 import { CreateTrackDto } from '../dto/create-track.dto';
 import { UpdateTrackDto } from '../dto/update-track.dto';
@@ -13,7 +13,7 @@ export class TrackService {
   private readonly logger = new Logger(TrackService.name);
 
   constructor(
-    private readonly trackRepository: TrackRepository,
+    private readonly trackRepository: PrismaTrackRepository,
     private readonly eventService: EventService,
   ) {}
 
@@ -79,7 +79,7 @@ export class TrackService {
 
     await this.trackRepository.delete(id);
 
-    this.eventService.emitTrackDeleted({ id });
+    await this.eventService.emitTrackDeleted({ id });
 
     this.logger.log(getEntitySuccessMessage('Track', 'deleted', id));
   }
