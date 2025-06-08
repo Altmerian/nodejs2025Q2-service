@@ -39,11 +39,11 @@ COPY package*.json ./
 # Copy Prisma schema and migrations for runtime
 COPY prisma ./prisma
 
-# Install only production dependencies and clean cache in same layer
-RUN npm ci --only=production && \
+# Install only production dependencies and clean cache
+RUN npm ci --only=production --no-audit --no-fund --no-optional && \
     npx prisma generate && \
     npm cache clean --force && \
-    rm -rf /tmp/*
+    rm -rf /tmp/* /root/.npm /home/nodejs/.npm
 
 # Copy built application from builder stage
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist

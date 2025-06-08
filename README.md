@@ -102,12 +102,6 @@ npm run test
 
 # Run specific test suite
 npm run test -- <path to suite>
-
-# Run all tests with authorization (currently not implemented)
-npm run test:auth
-
-# Run specific test suite with authorization
-npm run test:auth -- <path to suite>
 ```
 
 ### Database Testing Notes
@@ -125,18 +119,7 @@ npm run db:reset
 
 # Quick reset without confirmation (recommended for development)
 npm run db:reset:force
-
-# Alternative: manually delete test data via API endpoints
-# Example: DELETE http://localhost:4000/user/{id}
 ```
-
-### Test Troubleshooting
-
-| Error | Cause | Solution |
-|-------|-------|----------|
-| 409 Conflict | Existing user with same login | `npm run db:reset` |
-| Connection refused | Application not running | Start with `npm run docker:up:dev` |
-| Database errors | Schema out of sync | `npm run db:reset` |
 
 ## Database Scripts
 
@@ -162,7 +145,7 @@ npm run db:push
 # Reset database and apply all migrations (⚠️  REMOVES ALL DATA)
 npm run db:reset
 
-# Seed database with sample data (if seed script exists)
+# Seed database with sample data
 npm run db:seed
 
 # Open Prisma Studio (database browser)
@@ -185,9 +168,37 @@ npm run db:migrate:deploy
 npm run db:generate
 ```
 
+### Database Seeding
+
+The application includes a comprehensive seeding script that populates the database with realistic sample data for development and testing.
+
+#### Seeding Data
+
+```bash
+# Populate database with sample data
+npm run db:seed
+```
+
+#### Common Seeding Workflows
+
+```bash
+# Populate with sample data (clears existing data automatically)
+npm run db:seed
+
+# Seed and run tests
+npm run db:seed && npm test
+
+# Quick development setup
+npm run docker:up:dev && npm run db:seed
+
+# Only use db:reset if you need to reset schema/migrations
+npm run db:reset && npm run db:seed
+```
+
 **⚠️ Important Notes**:
 - Database scripts require PostgreSQL connection except for `db:clean`
 - `db:reset` **REMOVES ALL DATA** - use with caution
+- `db:seed` clears existing data before seeding to prevent conflicts
 - All `start` scripts automatically run database migrations before starting
 - Use `start:prod:no-migrate` if you need to skip migrations
 - For testing, always start with a clean database using `npm run db:reset`
