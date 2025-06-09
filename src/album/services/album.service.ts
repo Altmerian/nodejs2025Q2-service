@@ -1,11 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import { PrismaAlbumRepository } from '../repositories/prisma-album.repository';
 import { Album } from '../entities/album.entity';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 import { UpdateAlbumDto } from '../dto/update-album.dto';
-import { EventService, ArtistDeletedEvent } from '../../common/services/event.service';
-import { EVENTS } from '../../common/constants/events';
+import { EventService } from '../../common/services/event.service';
 import { getEntityNotFoundMessage, getEntitySuccessMessage } from '../../common/constants/messages';
 
 @Injectable()
@@ -81,24 +79,5 @@ export class AlbumService {
     await this.eventService.emitAlbumDeleted({ id });
 
     this.logger.log(getEntitySuccessMessage('Album', 'deleted', id));
-  }
-
-  async updateArtistReference(artistId: string): Promise<void> {
-    this.logger.log(`Updating artist references for deleted artist: ${artistId}`);
-
-    const albums = await this.albumRepository.findAll();
-    const albumsToUpdate = albums.filter((album) => album.artistId === artistId);
-
-    for (const album of albumsToUpdate) {
-      await this.albumRepository.update(album.id, { artistId: null });
-      this.logger.log(`Updated album ${album.id} - removed artist reference`);
-    }
-
-    this.logger.log(`Updated ${albumsToUpdate.length} albums`);
-  }
-
-  @OnEvent(EVENTS.ARTIST.DELETED)
-  async handleArtistDeleted(event: ArtistDeletedEvent): Promise<void> {
-    await this.updateArtistReference(event.id);
   }
 }

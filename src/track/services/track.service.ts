@@ -1,11 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import { PrismaTrackRepository } from '../repositories/prisma-track.repository';
 import { Track } from '../entities/track.entity';
 import { CreateTrackDto } from '../dto/create-track.dto';
 import { UpdateTrackDto } from '../dto/update-track.dto';
-import { EventService, ArtistDeletedEvent, AlbumDeletedEvent } from '../../common/services/event.service';
-import { EVENTS } from '../../common/constants/events';
+import { EventService } from '../../common/services/event.service';
 import { getEntityNotFoundMessage, getEntitySuccessMessage } from '../../common/constants/messages';
 
 @Injectable()
@@ -82,43 +80,5 @@ export class TrackService {
     await this.eventService.emitTrackDeleted({ id });
 
     this.logger.log(getEntitySuccessMessage('Track', 'deleted', id));
-  }
-
-  async updateArtistReference(artistId: string): Promise<void> {
-    this.logger.log(`Updating artist references for deleted artist: ${artistId}`);
-
-    const tracks = await this.trackRepository.findAll();
-    const tracksToUpdate = tracks.filter((track) => track.artistId === artistId);
-
-    for (const track of tracksToUpdate) {
-      await this.trackRepository.update(track.id, { artistId: null });
-      this.logger.log(`Updated track ${track.id} - removed artist reference`);
-    }
-
-    this.logger.log(`Updated ${tracksToUpdate.length} tracks`);
-  }
-
-  async updateAlbumReference(albumId: string): Promise<void> {
-    this.logger.log(`Updating album references for deleted album: ${albumId}`);
-
-    const tracks = await this.trackRepository.findAll();
-    const tracksToUpdate = tracks.filter((track) => track.albumId === albumId);
-
-    for (const track of tracksToUpdate) {
-      await this.trackRepository.update(track.id, { albumId: null });
-      this.logger.log(`Updated track ${track.id} - removed album reference`);
-    }
-
-    this.logger.log(`Updated ${tracksToUpdate.length} tracks`);
-  }
-
-  @OnEvent(EVENTS.ARTIST.DELETED)
-  async handleArtistDeleted(event: ArtistDeletedEvent): Promise<void> {
-    await this.updateArtistReference(event.id);
-  }
-
-  @OnEvent(EVENTS.ALBUM.DELETED)
-  async handleAlbumDeleted(event: AlbumDeletedEvent): Promise<void> {
-    await this.updateAlbumReference(event.id);
   }
 }

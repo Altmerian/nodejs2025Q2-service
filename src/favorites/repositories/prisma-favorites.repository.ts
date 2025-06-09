@@ -4,24 +4,23 @@ import { Favorites } from '../entities/favorites.entity';
 
 @Injectable()
 export class PrismaFavoritesRepository {
-  private readonly SINGLETON_ID = 'singleton';
-
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Get all favorites
+   * Get all favorites (returns IDs for compatibility with existing service)
    */
   async findAll(): Promise<Favorites> {
-    const favorites = await this.prisma.favorites.findUnique({
-      where: { id: this.SINGLETON_ID },
-    });
+    const [favoriteArtists, favoriteAlbums, favoriteTracks] = await Promise.all([
+      this.prisma.favoriteArtist.findMany(),
+      this.prisma.favoriteAlbum.findMany(),
+      this.prisma.favoriteTrack.findMany(),
+    ]);
 
-    if (!favorites) {
-      // Create default empty favorites if not exists
-      return await this.createDefault();
-    }
-
-    return this.mapToEntity(favorites);
+    return {
+      artists: favoriteArtists.map((fa) => fa.artistId),
+      albums: favoriteAlbums.map((fa) => fa.albumId),
+      tracks: favoriteTracks.map((ft) => ft.trackId),
+    };
   }
 
   /**
@@ -30,26 +29,18 @@ export class PrismaFavoritesRepository {
    * @returns true if added, false if already exists
    */
   async addArtist(artistId: string): Promise<boolean> {
-    const favorites = await this.findAll();
-    
-    if (favorites.artists.includes(artistId)) {
-      return false;
+    try {
+      await this.prisma.favoriteArtist.create({
+        data: { artistId },
+      });
+      return true;
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        // Unique constraint violation - already exists
+        return false;
+      }
+      throw error;
     }
-
-    const updatedArtists = [...favorites.artists, artistId];
-    
-    await this.prisma.favorites.upsert({
-      where: { id: this.SINGLETON_ID },
-      update: { artists: updatedArtists },
-      create: {
-        id: this.SINGLETON_ID,
-        artists: updatedArtists,
-        albums: favorites.albums,
-        tracks: favorites.tracks,
-      },
-    });
-
-    return true;
   }
 
   /**
@@ -58,20 +49,18 @@ export class PrismaFavoritesRepository {
    * @returns true if removed, false if not found
    */
   async removeArtist(artistId: string): Promise<boolean> {
-    const favorites = await this.findAll();
-    
-    if (!favorites.artists.includes(artistId)) {
-      return false;
+    try {
+      await this.prisma.favoriteArtist.delete({
+        where: { artistId },
+      });
+      return true;
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        // Record not found
+        return false;
+      }
+      throw error;
     }
-
-    const updatedArtists = favorites.artists.filter(id => id !== artistId);
-    
-    await this.prisma.favorites.update({
-      where: { id: this.SINGLETON_ID },
-      data: { artists: updatedArtists },
-    });
-
-    return true;
   }
 
   /**
@@ -80,26 +69,18 @@ export class PrismaFavoritesRepository {
    * @returns true if added, false if already exists
    */
   async addAlbum(albumId: string): Promise<boolean> {
-    const favorites = await this.findAll();
-    
-    if (favorites.albums.includes(albumId)) {
-      return false;
+    try {
+      await this.prisma.favoriteAlbum.create({
+        data: { albumId },
+      });
+      return true;
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        // Unique constraint violation - already exists
+        return false;
+      }
+      throw error;
     }
-
-    const updatedAlbums = [...favorites.albums, albumId];
-    
-    await this.prisma.favorites.upsert({
-      where: { id: this.SINGLETON_ID },
-      update: { albums: updatedAlbums },
-      create: {
-        id: this.SINGLETON_ID,
-        artists: favorites.artists,
-        albums: updatedAlbums,
-        tracks: favorites.tracks,
-      },
-    });
-
-    return true;
   }
 
   /**
@@ -108,20 +89,18 @@ export class PrismaFavoritesRepository {
    * @returns true if removed, false if not found
    */
   async removeAlbum(albumId: string): Promise<boolean> {
-    const favorites = await this.findAll();
-    
-    if (!favorites.albums.includes(albumId)) {
-      return false;
+    try {
+      await this.prisma.favoriteAlbum.delete({
+        where: { albumId },
+      });
+      return true;
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        // Record not found
+        return false;
+      }
+      throw error;
     }
-
-    const updatedAlbums = favorites.albums.filter(id => id !== albumId);
-    
-    await this.prisma.favorites.update({
-      where: { id: this.SINGLETON_ID },
-      data: { albums: updatedAlbums },
-    });
-
-    return true;
   }
 
   /**
@@ -130,26 +109,18 @@ export class PrismaFavoritesRepository {
    * @returns true if added, false if already exists
    */
   async addTrack(trackId: string): Promise<boolean> {
-    const favorites = await this.findAll();
-    
-    if (favorites.tracks.includes(trackId)) {
-      return false;
+    try {
+      await this.prisma.favoriteTrack.create({
+        data: { trackId },
+      });
+      return true;
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        // Unique constraint violation - already exists
+        return false;
+      }
+      throw error;
     }
-
-    const updatedTracks = [...favorites.tracks, trackId];
-    
-    await this.prisma.favorites.upsert({
-      where: { id: this.SINGLETON_ID },
-      update: { tracks: updatedTracks },
-      create: {
-        id: this.SINGLETON_ID,
-        artists: favorites.artists,
-        albums: favorites.albums,
-        tracks: updatedTracks,
-      },
-    });
-
-    return true;
   }
 
   /**
@@ -158,20 +129,18 @@ export class PrismaFavoritesRepository {
    * @returns true if removed, false if not found
    */
   async removeTrack(trackId: string): Promise<boolean> {
-    const favorites = await this.findAll();
-    
-    if (!favorites.tracks.includes(trackId)) {
-      return false;
+    try {
+      await this.prisma.favoriteTrack.delete({
+        where: { trackId },
+      });
+      return true;
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        // Record not found
+        return false;
+      }
+      throw error;
     }
-
-    const updatedTracks = favorites.tracks.filter(id => id !== trackId);
-    
-    await this.prisma.favorites.update({
-      where: { id: this.SINGLETON_ID },
-      data: { tracks: updatedTracks },
-    });
-
-    return true;
   }
 
   /**
@@ -179,8 +148,10 @@ export class PrismaFavoritesRepository {
    * @param artistId - Artist ID to check
    */
   async isArtistFavorite(artistId: string): Promise<boolean> {
-    const favorites = await this.findAll();
-    return favorites.artists.includes(artistId);
+    const count = await this.prisma.favoriteArtist.count({
+      where: { artistId },
+    });
+    return count > 0;
   }
 
   /**
@@ -188,8 +159,10 @@ export class PrismaFavoritesRepository {
    * @param albumId - Album ID to check
    */
   async isAlbumFavorite(albumId: string): Promise<boolean> {
-    const favorites = await this.findAll();
-    return favorites.albums.includes(albumId);
+    const count = await this.prisma.favoriteAlbum.count({
+      where: { albumId },
+    });
+    return count > 0;
   }
 
   /**
@@ -197,54 +170,43 @@ export class PrismaFavoritesRepository {
    * @param trackId - Track ID to check
    */
   async isTrackFavorite(trackId: string): Promise<boolean> {
-    const favorites = await this.findAll();
-    return favorites.tracks.includes(trackId);
+    const count = await this.prisma.favoriteTrack.count({
+      where: { trackId },
+    });
+    return count > 0;
   }
 
   /**
    * Clear all favorites (useful for testing)
    */
   async clear(): Promise<void> {
-    await this.prisma.favorites.upsert({
-      where: { id: this.SINGLETON_ID },
-      update: {
-        artists: [],
-        albums: [],
-        tracks: [],
-      },
-      create: {
-        id: this.SINGLETON_ID,
-        artists: [],
-        albums: [],
-        tracks: [],
-      },
-    });
+    await Promise.all([
+      this.prisma.favoriteTrack.deleteMany(),
+      this.prisma.favoriteAlbum.deleteMany(),
+      this.prisma.favoriteArtist.deleteMany(),
+    ]);
   }
 
   /**
-   * Create default empty favorites
+   * Get favorites with full entity data using Prisma relations
    */
-  private async createDefault(): Promise<Favorites> {
-    const favorites = await this.prisma.favorites.create({
-      data: {
-        id: this.SINGLETON_ID,
-        artists: [],
-        albums: [],
-        tracks: [],
-      },
-    });
+  async findAllWithEntities() {
+    const [favoriteArtists, favoriteAlbums, favoriteTracks] = await Promise.all([
+      this.prisma.favoriteArtist.findMany({
+        include: { artist: true },
+      }),
+      this.prisma.favoriteAlbum.findMany({
+        include: { album: true },
+      }),
+      this.prisma.favoriteTrack.findMany({
+        include: { track: true },
+      }),
+    ]);
 
-    return this.mapToEntity(favorites);
-  }
-
-  /**
-   * Map Prisma favorites to domain entity
-   */
-  private mapToEntity(prismaFavorites: any): Favorites {
     return {
-      artists: prismaFavorites.artists || [],
-      albums: prismaFavorites.albums || [],
-      tracks: prismaFavorites.tracks || [],
+      artists: favoriteArtists.map((fa) => fa.artist).filter((artist) => artist !== null),
+      albums: favoriteAlbums.map((fa) => fa.album).filter((album) => album !== null),
+      tracks: favoriteTracks.map((ft) => ft.track).filter((track) => track !== null),
     };
   }
 }

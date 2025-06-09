@@ -8,7 +8,9 @@ async function main() {
 
   // Clear existing data in reverse dependency order
   console.log('🧹 Clearing existing data...');
-  await prisma.favorites.deleteMany();
+  await prisma.favoriteTrack.deleteMany();
+  await prisma.favoriteAlbum.deleteMany();
+  await prisma.favoriteArtist.deleteMany();
   await prisma.track.deleteMany();
   await prisma.album.deleteMany();
   await prisma.artist.deleteMany();
@@ -236,25 +238,41 @@ async function main() {
 
   // Seed Favorites
   console.log('⭐ Seeding favorites...');
-  const favorites = await prisma.favorites.create({
-    data: {
-      id: 'singleton',
-      artists: [
-        '550e8400-e29b-41d4-a716-446655440010', // Queen
-        '550e8400-e29b-41d4-a716-446655440012', // Pink Floyd
-      ],
-      albums: [
-        '550e8400-e29b-41d4-a716-446655440021', // A Night at the Opera
-        '550e8400-e29b-41d4-a716-446655440023', // The Dark Side of the Moon
-      ],
-      tracks: [
-        '550e8400-e29b-41d4-a716-446655440031', // Bohemian Rhapsody
-        '550e8400-e29b-41d4-a716-446655440033', // Time
-        '550e8400-e29b-41d4-a716-446655440034', // Stairway to Heaven
-      ],
-    },
-  });
-  console.log(`✅ Created favorites with ${favorites.artists.length} artists, ${favorites.albums.length} albums, ${favorites.tracks.length} tracks`);
+  
+  // Add favorite artists
+  const favoriteArtists = await Promise.all([
+    prisma.favoriteArtist.create({
+      data: { artistId: '550e8400-e29b-41d4-a716-446655440010' }, // Queen
+    }),
+    prisma.favoriteArtist.create({
+      data: { artistId: '550e8400-e29b-41d4-a716-446655440012' }, // Pink Floyd
+    }),
+  ]);
+  
+  // Add favorite albums
+  const favoriteAlbums = await Promise.all([
+    prisma.favoriteAlbum.create({
+      data: { albumId: '550e8400-e29b-41d4-a716-446655440021' }, // A Night at the Opera
+    }),
+    prisma.favoriteAlbum.create({
+      data: { albumId: '550e8400-e29b-41d4-a716-446655440023' }, // The Dark Side of the Moon
+    }),
+  ]);
+  
+  // Add favorite tracks
+  const favoriteTracks = await Promise.all([
+    prisma.favoriteTrack.create({
+      data: { trackId: '550e8400-e29b-41d4-a716-446655440031' }, // Bohemian Rhapsody
+    }),
+    prisma.favoriteTrack.create({
+      data: { trackId: '550e8400-e29b-41d4-a716-446655440033' }, // Time
+    }),
+    prisma.favoriteTrack.create({
+      data: { trackId: '550e8400-e29b-41d4-a716-446655440034' }, // Stairway to Heaven
+    }),
+  ]);
+  
+  console.log(`✅ Created favorites: ${favoriteArtists.length} artists, ${favoriteAlbums.length} albums, ${favoriteTracks.length} tracks`);
 
   console.log('🎉 Database seeding completed successfully!');
   console.log('\n📊 Summary:');
@@ -262,7 +280,7 @@ async function main() {
   console.log(`🎨 Artists: ${artists.length}`);
   console.log(`💽 Albums: ${albums.length}`);
   console.log(`🎵 Tracks: ${tracks.length}`);
-  console.log(`⭐ Favorites: 1 (with ${favorites.artists.length + favorites.albums.length + favorites.tracks.length} items)`);
+  console.log(`⭐ Favorites: ${favoriteArtists.length + favoriteAlbums.length + favoriteTracks.length} items (${favoriteArtists.length} artists, ${favoriteAlbums.length} albums, ${favoriteTracks.length} tracks)`);
 }
 
 main()

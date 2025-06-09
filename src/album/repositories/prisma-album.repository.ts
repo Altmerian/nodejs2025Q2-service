@@ -21,16 +21,24 @@ export class PrismaAlbumRepository implements IBaseRepository<Album> {
   }
 
   async create(entity: Omit<Album, 'id'>): Promise<Album> {
-    const id = generateUuid();
-    const album = await this.prisma.album.create({
-      data: {
-        id,
-        name: entity.name,
-        year: entity.year,
-        artistId: entity.artistId,
-      },
-    });
-    return this.mapToEntity(album);
+    try {
+      const id = generateUuid();
+      const album = await this.prisma.album.create({
+        data: {
+          id,
+          name: entity.name,
+          year: entity.year,
+          artistId: entity.artistId,
+        },
+      });
+      return this.mapToEntity(album);
+    } catch (error: any) {
+      // Check if it's a foreign key constraint error
+      if (error.code === 'P2003') {
+        throw new Error('Invalid artistId: Artist does not exist');
+      }
+      throw error;
+    }
   }
 
   async update(id: string, entity: Partial<Omit<Album, 'id'>>): Promise<Album | null> {
@@ -50,6 +58,10 @@ export class PrismaAlbumRepository implements IBaseRepository<Album> {
       if (error.code === 'P2025') {
         // Record not found
         return null;
+      }
+      // Check if it's a foreign key constraint error
+      if (error.code === 'P2003') {
+        throw new Error('Invalid artistId: Artist does not exist');
       }
       throw error;
     }

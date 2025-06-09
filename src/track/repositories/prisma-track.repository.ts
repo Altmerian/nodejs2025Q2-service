@@ -13,6 +13,16 @@ export class PrismaTrackRepository implements IBaseRepository<Track> {
     return tracks.map(this.mapToEntity);
   }
 
+  async findAllWithRelations(): Promise<Track[]> {
+    const tracks = await this.prisma.track.findMany({
+      include: {
+        artist: true,
+        album: true,
+      },
+    });
+    return tracks.map(this.mapToEntity);
+  }
+
   async findById(id: string): Promise<Track | null> {
     const track = await this.prisma.track.findUnique({
       where: { id },
@@ -20,18 +30,44 @@ export class PrismaTrackRepository implements IBaseRepository<Track> {
     return track ? this.mapToEntity(track) : null;
   }
 
-  async create(entity: Omit<Track, 'id'>): Promise<Track> {
-    const id = generateUuid();
-    const track = await this.prisma.track.create({
-      data: {
-        id,
-        name: entity.name,
-        duration: entity.duration,
-        artistId: entity.artistId,
-        albumId: entity.albumId,
+  async findByIdWithRelations(id: string): Promise<Track | null> {
+    const track = await this.prisma.track.findUnique({
+      where: { id },
+      include: {
+        artist: true,
+        album: true,
       },
     });
-    return this.mapToEntity(track);
+    return track ? this.mapToEntity(track) : null;
+  }
+
+  async create(entity: Omit<Track, 'id'>): Promise<Track> {
+    try {
+      const id = generateUuid();
+      const track = await this.prisma.track.create({
+        data: {
+          id,
+          name: entity.name,
+          duration: entity.duration,
+          artistId: entity.artistId,
+          albumId: entity.albumId,
+        },
+      });
+      return this.mapToEntity(track);
+    } catch (error: any) {
+      // Check if it's a foreign key constraint error
+      if (error.code === 'P2003') {
+        // Determine which foreign key constraint failed
+        if (error.meta?.field_name?.includes('artistId')) {
+          throw new Error('Invalid artistId: Artist does not exist');
+        } else if (error.meta?.field_name?.includes('albumId')) {
+          throw new Error('Invalid albumId: Album does not exist');
+        } else {
+          throw new Error('Invalid reference: Related entity does not exist');
+        }
+      }
+      throw error;
+    }
   }
 
   async update(id: string, entity: Partial<Omit<Track, 'id'>>): Promise<Track | null> {
@@ -52,6 +88,17 @@ export class PrismaTrackRepository implements IBaseRepository<Track> {
       if (error.code === 'P2025') {
         // Record not found
         return null;
+      }
+      // Check if it's a foreign key constraint error
+      if (error.code === 'P2003') {
+        // Determine which foreign key constraint failed
+        if (error.meta?.field_name?.includes('artistId')) {
+          throw new Error('Invalid artistId: Artist does not exist');
+        } else if (error.meta?.field_name?.includes('albumId')) {
+          throw new Error('Invalid albumId: Album does not exist');
+        } else {
+          throw new Error('Invalid reference: Related entity does not exist');
+        }
       }
       throw error;
     }

@@ -1,12 +1,9 @@
 import { Injectable, Logger, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import { PrismaFavoritesRepository } from '../repositories/prisma-favorites.repository';
 import { FavoritesResponseDto } from '../dto/favorites-response.dto';
 import { ArtistService } from '../../artist/services/artist.service';
 import { AlbumService } from '../../album/services/album.service';
 import { TrackService } from '../../track/services/track.service';
-import { ArtistDeletedEvent, AlbumDeletedEvent, TrackDeletedEvent } from '../../common/services/event.service';
-import { EVENTS } from '../../common/constants/events';
 import { getEntityNotFoundMessage } from '../../common/constants/messages';
 
 @Injectable()
@@ -26,46 +23,13 @@ export class FavoritesService {
   async getFavorites(): Promise<FavoritesResponseDto> {
     this.logger.log('Getting all favorites');
 
-    const favorites = await this.favoritesRepository.findAll();
-
-    // Resolve full entities
-    const artists = await Promise.all(
-      favorites.artists.map(async (artistId) => {
-        try {
-          return await this.artistService.findById(artistId);
-        } catch {
-          this.logger.warn(`Artist ${artistId} not found in favorites, skipping`);
-          return null;
-        }
-      }),
-    );
-
-    const albums = await Promise.all(
-      favorites.albums.map(async (albumId) => {
-        try {
-          return await this.albumService.findById(albumId);
-        } catch {
-          this.logger.warn(`Album ${albumId} not found in favorites, skipping`);
-          return null;
-        }
-      }),
-    );
-
-    const tracks = await Promise.all(
-      favorites.tracks.map(async (trackId) => {
-        try {
-          return await this.trackService.findById(trackId);
-        } catch {
-          this.logger.warn(`Track ${trackId} not found in favorites, skipping`);
-          return null;
-        }
-      }),
-    );
+    // Use the new repository method that leverages Prisma relations
+    const favoritesWithEntities = await this.favoritesRepository.findAllWithEntities();
 
     return new FavoritesResponseDto({
-      artists: artists.filter((artist) => artist !== null),
-      albums: albums.filter((album) => album !== null),
-      tracks: tracks.filter((track) => track !== null),
+      artists: favoritesWithEntities.artists,
+      albums: favoritesWithEntities.albums,
+      tracks: favoritesWithEntities.tracks,
     });
   }
 
@@ -189,30 +153,6 @@ export class FavoritesService {
     this.logger.log(`Track ${trackId} removed from favorites`);
   }
 
-  /**
-   * Handle artist deletion event - remove from favorites
-   */
-  @OnEvent(EVENTS.ARTIST.DELETED)
-  async handleArtistDeleted(event: ArtistDeletedEvent): Promise<void> {
-    this.logger.log(`Handling artist deletion event for ${event.id}`);
-    await this.favoritesRepository.removeArtist(event.id);
-  }
-
-  /**
-   * Handle album deletion event - remove from favorites
-   */
-  @OnEvent(EVENTS.ALBUM.DELETED)
-  async handleAlbumDeleted(event: AlbumDeletedEvent): Promise<void> {
-    this.logger.log(`Handling album deletion event for ${event.id}`);
-    await this.favoritesRepository.removeAlbum(event.id);
-  }
-
-  /**
-   * Handle track deletion event - remove from favorites
-   */
-  @OnEvent(EVENTS.TRACK.DELETED)
-  async handleTrackDeleted(event: TrackDeletedEvent): Promise<void> {
-    this.logger.log(`Handling track deletion event for ${event.id}`);
-    await this.favoritesRepository.removeTrack(event.id);
-  }
+  // Note: Event handlers removed because FK constraints with CASCADE DELETE
+  // automatically handle cleanup when entities are deleted
 }

@@ -20,6 +20,17 @@ export class PrismaArtistRepository implements IBaseRepository<Artist> {
     return artist ? this.mapToEntity(artist) : null;
   }
 
+  async findByIdWithRelations(id: string): Promise<Artist | null> {
+    const artist = await this.prisma.artist.findUnique({
+      where: { id },
+      include: {
+        albums: true,
+        tracks: true,
+      },
+    });
+    return artist ? this.mapToEntity(artist) : null;
+  }
+
   async create(entity: Omit<Artist, 'id'>): Promise<Artist> {
     const id = generateUuid();
     const artist = await this.prisma.artist.create({
