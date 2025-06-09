@@ -1,0 +1,9 @@
+# Ignore test files from Prettier formatting
+test/
+
+# Other common ignores
+node_modules/
+dist/
+build/
+coverage/
+*.log 

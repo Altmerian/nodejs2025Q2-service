@@ -12,4 +12,40 @@ export class ConfigService {
   get cryptSalt(): number {
     return this.configService.getOrThrow<number>('cryptSalt');
   }
+
+  get databaseUrl(): string {
+    return this.configService.getOrThrow<string>('database.url');
+  }
+
+  get databaseHost(): string {
+    return this.configService.getOrThrow<string>('database.host');
+  }
+
+  get databasePort(): number {
+    return this.configService.getOrThrow<number>('database.port');
+  }
+
+  get databaseUsername(): string {
+    return this.configService.getOrThrow<string>('database.username');
+  }
+
+  get databasePassword(): string {
+    return this.configService.getOrThrow<string>('database.password');
+  }
+
+  get databaseName(): string {
+    return this.configService.getOrThrow<string>('database.database');
+  }
+
+  get nodeEnv(): string {
+    return this.configService.getOrThrow<string>('nodeEnv');
+  }
+
+  get isDevelopment(): boolean {
+    return this.nodeEnv === 'development';
+  }
+
+  get isProduction(): boolean {
+    return this.nodeEnv === 'production';
+  }
 }

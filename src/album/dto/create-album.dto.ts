@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateAlbumDto {
   @ApiProperty({
     description: 'The album name',
-    example: 'Innuendo'
+    example: 'Innuendo',
   })
   @IsNotEmpty()
   @IsString()

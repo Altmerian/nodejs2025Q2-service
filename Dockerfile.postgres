@@ -1,0 +1,26 @@
+# PostgreSQL custom image based on official postgres image
+FROM postgres:16-alpine
+
+# Set locale to UTF-8
+ENV LANG=en_US.utf8
+
+# Create directory for custom initialization scripts
+RUN mkdir -p /docker-entrypoint-initdb.d
+
+# Create directory for PostgreSQL logs with proper permissions
+RUN mkdir -p /var/log/postgresql && \
+    chown postgres:postgres /var/log/postgresql
+
+# Copy any custom initialization scripts (to be added later if needed)
+# COPY ./init-scripts/*.sql /docker-entrypoint-initdb.d/
+
+# Set PostgreSQL to log to both stderr and file
+RUN echo "logging_collector = on" >> /usr/local/share/postgresql/postgresql.conf.sample && \
+    echo "log_directory = '/var/log/postgresql'" >> /usr/local/share/postgresql/postgresql.conf.sample && \
+    echo "log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'" >> /usr/local/share/postgresql/postgresql.conf.sample && \
+    echo "log_destination = 'stderr'" >> /usr/local/share/postgresql/postgresql.conf.sample
+
+# Expose PostgreSQL port
+EXPOSE 5432
+
+# The entrypoint and cmd are inherited from the base image

@@ -1,0 +1,66 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+docs/
+doc/
+
+# Development files
+.eslintrc.js
+.prettierrc
+jest.config.json
+
+# Test files
+test/
+coverage/
+.nyc_output/
+
+# IDE
+.idea/
+.vscode/
+*.launch
+.settings/
+*.sublime-workspace
+
+# OS
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+security-audit.log
+docker-scan.log
+
+# Environment files (will be provided via docker-compose)
+.env
+.env.example
+
+# Node modules (will be installed in container)
+node_modules/
+
+# Build output (will be generated in container)
+dist/
+
+# Docker files themselves
+Dockerfile
+Dockerfile.postgres
+docker-compose.yml
+docker-compose.dev.yml
+.dockerignore
+
+# Additional files to exclude
+*.md
+LICENSE
+.npmrc
+*.swp
+*.swo
+*~
+.git-rewrite/
+.tmp/

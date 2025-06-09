@@ -6,6 +6,6 @@ import { User } from '../entities/user.entity';
 export class UserRepository extends BaseInMemoryRepository<User> {
   async findByLogin(login: string): Promise<User | null> {
     const users = await this.findAll();
-    return users.find(user => user.login === login) || null;
+    return users.find((user) => user.login === login) || null;
   }
 }

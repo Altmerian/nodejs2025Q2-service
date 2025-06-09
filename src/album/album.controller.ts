@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Body,
-  Param,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AlbumService } from './services/album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -38,10 +28,7 @@ export class AlbumController {
   }
 
   @Put(':id')
-  async update(
-    @Param('id', UuidValidationPipe) id: string,
-    @Body() updateAlbumDto: UpdateAlbumDto,
-  ): Promise<Album> {
+  async update(@Param('id', UuidValidationPipe) id: string, @Body() updateAlbumDto: UpdateAlbumDto): Promise<Album> {
     return this.albumService.update(id, updateAlbumDto);
   }
 

@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Body,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { ArtistService } from './services/artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -26,7 +16,7 @@ export class ArtistController {
   @ApiResponse({
     status: 200,
     description: 'Successful operation',
-    type: [Artist]
+    type: [Artist],
   })
   async findAll(): Promise<Artist[]> {
     return this.artistService.findAll();
@@ -38,15 +28,15 @@ export class ArtistController {
   @ApiResponse({
     status: 200,
     description: 'Successful operation',
-    type: Artist
+    type: Artist,
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request. artistId is invalid (not uuid)'
+    description: 'Bad request. artistId is invalid (not uuid)',
   })
   @ApiResponse({
     status: 404,
-    description: 'Artist was not found.'
+    description: 'Artist was not found.',
   })
   async findById(@Param('id', UuidValidationPipe) id: string): Promise<Artist> {
     return this.artistService.findById(id);
@@ -58,11 +48,11 @@ export class ArtistController {
   @ApiResponse({
     status: 201,
     description: 'Successful operation',
-    type: Artist
+    type: Artist,
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request. body does not contain required fields'
+    description: 'Bad request. body does not contain required fields',
   })
   async create(@Body() createArtistDto: CreateArtistDto): Promise<Artist> {
     return this.artistService.create(createArtistDto);
@@ -74,20 +64,17 @@ export class ArtistController {
   @ApiResponse({
     status: 200,
     description: 'The artist has been updated.',
-    type: Artist
+    type: Artist,
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request. artistId is invalid (not uuid)'
+    description: 'Bad request. artistId is invalid (not uuid)',
   })
   @ApiResponse({
     status: 404,
-    description: 'Artist was not found.'
+    description: 'Artist was not found.',
   })
-  async update(
-    @Param('id', UuidValidationPipe) id: string,
-    @Body() updateArtistDto: UpdateArtistDto,
-  ): Promise<Artist> {
+  async update(@Param('id', UuidValidationPipe) id: string, @Body() updateArtistDto: UpdateArtistDto): Promise<Artist> {
     return this.artistService.update(id, updateArtistDto);
   }
 
@@ -97,15 +84,15 @@ export class ArtistController {
   @ApiParam({ name: 'id', description: 'Artist ID', format: 'uuid' })
   @ApiResponse({
     status: 204,
-    description: 'Deleted successfully'
+    description: 'Deleted successfully',
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request. artistId is invalid (not uuid)'
+    description: 'Bad request. artistId is invalid (not uuid)',
   })
   @ApiResponse({
     status: 404,
-    description: 'Artist was not found.'
+    description: 'Artist was not found.',
   })
   async delete(@Param('id', UuidValidationPipe) id: string): Promise<void> {
     await this.artistService.delete(id);

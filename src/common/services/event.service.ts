@@ -6,9 +6,9 @@ export interface EntityDeletedEvent {
   id: string;
 }
 
-export interface ArtistDeletedEvent extends EntityDeletedEvent {}
-export interface AlbumDeletedEvent extends EntityDeletedEvent {}
-export interface TrackDeletedEvent extends EntityDeletedEvent {}
+export type ArtistDeletedEvent = EntityDeletedEvent;
+export type AlbumDeletedEvent = EntityDeletedEvent;
+export type TrackDeletedEvent = EntityDeletedEvent;
 
 @Injectable()
 export class EventService {
@@ -18,24 +18,24 @@ export class EventService {
    * Emit an event when an artist is deleted
    * @param event - Artist deleted event data
    */
-  emitArtistDeleted(event: ArtistDeletedEvent): void {
-    this.eventEmitter.emit(EVENTS.ARTIST.DELETED, event);
+  async emitArtistDeleted(event: ArtistDeletedEvent): Promise<void> {
+    await this.eventEmitter.emitAsync(EVENTS.ARTIST.DELETED, event);
   }
 
   /**
    * Emit an event when an album is deleted
    * @param event - Album deleted event data
    */
-  emitAlbumDeleted(event: AlbumDeletedEvent): void {
-    this.eventEmitter.emit(EVENTS.ALBUM.DELETED, event);
+  async emitAlbumDeleted(event: AlbumDeletedEvent): Promise<void> {
+    await this.eventEmitter.emitAsync(EVENTS.ALBUM.DELETED, event);
   }
 
   /**
    * Emit an event when a track is deleted
    * @param event - Track deleted event data
    */
-  emitTrackDeleted(event: TrackDeletedEvent): void {
-    this.eventEmitter.emit(EVENTS.TRACK.DELETED, event);
+  async emitTrackDeleted(event: TrackDeletedEvent): Promise<void> {
+    await this.eventEmitter.emitAsync(EVENTS.TRACK.DELETED, event);
   }
 
   /**

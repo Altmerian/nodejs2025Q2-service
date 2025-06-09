@@ -9,4 +9,17 @@ export default () => ({
     if (isNaN(salt) || salt < 1) return 10;
     return salt;
   })(),
+  database: {
+    url: process.env.DATABASE_URL || 'postgresql://username:password@localhost:5432/database_name',
+    host: process.env.POSTGRES_HOST || 'localhost',
+    port: (() => {
+      const port = parseInt(process.env.POSTGRES_PORT, 10);
+      if (isNaN(port) || port <= 0 || port > 65535) return 5432;
+      return port;
+    })(),
+    username: process.env.POSTGRES_USER || 'username',
+    password: process.env.POSTGRES_PASSWORD || 'password',
+    database: process.env.POSTGRES_DB || 'database_name',
+  },
+  nodeEnv: process.env.NODE_ENV || 'development',
 });
