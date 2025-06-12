@@ -41,6 +41,9 @@ services:
       PORT: ${PORT:-4000}
       DATABASE_URL: postgresql://${POSTGRES_USER:-developer}:${POSTGRES_PASSWORD:-dev123456}@db:5432/${POSTGRES_DB:-home_library_dev}
       CRYPT_SALT: ${CRYPT_SALT:-10}
+      LOG_LEVEL: ${LOG_LEVEL:-log}
+      LOG_DIR: ${LOG_DIR:-logs}
+      LOG_MAX_SIZE_KB: ${LOG_MAX_SIZE_KB:-100}
     ports:
       - "${PORT:-4000}:4000"
       # Debug port for development
@@ -55,6 +58,8 @@ services:
       - ./jest.config.json:/app/jest.config.json:ro
       - ./.eslintrc.js:/app/.eslintrc.js:ro
       - ./.prettierrc:/app/.prettierrc:ro
+      # Mount logs directory
+      - ./logs:/app/logs
       # Prevent node_modules from being overwritten
       - /app/node_modules
     depends_on:

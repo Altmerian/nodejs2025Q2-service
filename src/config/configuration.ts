@@ -22,4 +22,13 @@ export default () => ({
     database: process.env.POSTGRES_DB || 'database_name',
   },
   nodeEnv: process.env.NODE_ENV || 'development',
+  logging: {
+    level: process.env.LOG_LEVEL || 'log',
+    dir: process.env.LOG_DIR || 'logs',
+    maxSizeKb: (() => {
+      const size = parseInt(process.env.LOG_MAX_SIZE_KB, 10);
+      if (isNaN(size) || size <= 0) return 100;
+      return size;
+    })(),
+  },
 });

@@ -48,4 +48,16 @@ export class ConfigService {
   get isProduction(): boolean {
     return this.nodeEnv === 'production';
   }
+
+  get logLevel(): string {
+    return this.configService.getOrThrow<string>('logging.level');
+  }
+
+  get logDir(): string {
+    return this.configService.getOrThrow<string>('logging.dir');
+  }
+
+  get logMaxSizeKb(): number {
+    return this.configService.getOrThrow<number>('logging.maxSizeKb');
+  }
 }
