@@ -1,8 +1,6 @@
 // Export barrel file for common module
 export * from './services/password.service';
-export * from './services/event.service';
 export * from './repositories/base.repository';
-export * from './constants/events';
 export * from './constants/messages';
 export * from './filters/http-exception.filter';
 export * from './interceptors/transform.interceptor';

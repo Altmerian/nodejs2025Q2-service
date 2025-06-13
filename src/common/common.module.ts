@@ -1,7 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '../config/config.module';
 import { PasswordService } from './services/password.service';
-import { EventService } from './services/event.service';
 
 /**
  * Common module providing shared services and utilities
@@ -11,7 +10,7 @@ import { EventService } from './services/event.service';
 @Global()
 @Module({
   imports: [ConfigModule],
-  providers: [PasswordService, EventService],
-  exports: [PasswordService, EventService],
+  providers: [PasswordService],
+  exports: [PasswordService],
 })
 export class CommonModule {}

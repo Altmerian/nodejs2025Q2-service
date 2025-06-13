@@ -24,7 +24,7 @@ async function bootstrap() {
     }),
   );
 
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(loggingService));
 
   // Register global interceptor for response logging
   app.useGlobalInterceptors(new ResponseLoggingInterceptor(loggingService));
@@ -39,5 +39,19 @@ async function bootstrap() {
   SwaggerModule.setup('doc', app, document);
 
   await app.listen(port);
+
+  // Handle uncaught exceptions
+  process.on('uncaughtException', (error: Error) => {
+    loggingService.fatal(`Uncaught Exception: ${error.message}`, 'Bootstrap', error.stack);
+    process.exit(1);
+  });
+
+  // Handle unhandled promise rejections
+  process.on('unhandledRejection', (reason: unknown, promise: Promise<unknown>) => {
+    const errorMessage = reason instanceof Error ? reason.message : String(reason);
+    const errorStack = reason instanceof Error ? reason.stack : undefined;
+    loggingService.fatal(`Unhandled Rejection at: ${promise}, reason: ${errorMessage}`, 'Bootstrap', errorStack);
+    process.exit(1);
+  });
 }
 bootstrap();
