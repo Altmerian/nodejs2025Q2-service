@@ -3,17 +3,13 @@ import { PrismaTrackRepository } from '../repositories/prisma-track.repository';
 import { Track } from '../entities/track.entity';
 import { CreateTrackDto } from '../dto/create-track.dto';
 import { UpdateTrackDto } from '../dto/update-track.dto';
-import { EventService } from '../../common/services/event.service';
 import { getEntityNotFoundMessage, getEntitySuccessMessage } from '../../common/constants/messages';
 
 @Injectable()
 export class TrackService {
   private readonly logger = new Logger(TrackService.name);
 
-  constructor(
-    private readonly trackRepository: PrismaTrackRepository,
-    private readonly eventService: EventService,
-  ) {}
+  constructor(private readonly trackRepository: PrismaTrackRepository) {}
 
   async findAll(): Promise<Track[]> {
     this.logger.log('Finding all tracks');
@@ -76,8 +72,6 @@ export class TrackService {
     await this.findById(id); // Verify track exists
 
     await this.trackRepository.delete(id);
-
-    await this.eventService.emitTrackDeleted({ id });
 
     this.logger.log(getEntitySuccessMessage('Track', 'deleted', id));
   }

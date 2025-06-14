@@ -12,23 +12,28 @@ paths:
               schema:
                 type: string
       tags:
-      - App
+        - App
   /user:
     get:
+      description: Gets all users
       operationId: UserController_findAll
       parameters: []
       responses:
         '200':
-          description: ''
+          description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/UserResponseDto'
+      security:
+        - JWT-auth: []
+      summary: Get all users
       tags:
-      - Users
+        - Users
     post:
+      description: Creates a new user
       operationId: UserController_create
       parameters: []
       requestBody:
@@ -39,39 +44,57 @@ paths:
               $ref: '#/components/schemas/CreateUserDto'
       responses:
         '201':
-          description: ''
+          description: The user has been created.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponseDto'
+        '400':
+          description: Bad request. body does not contain required fields
+      security:
+        - JWT-auth: []
+      summary: Create user
       tags:
-      - Users
+        - Users
   /user/{id}:
     get:
+      description: Get single user by id
       operationId: UserController_findById
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          description: User ID
+          schema:
+            format: uuid
+            type: string
       responses:
         '200':
-          description: ''
+          description: Successful operation
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponseDto'
+        '400':
+          description: Bad request. userId is invalid (not uuid)
+        '404':
+          description: User not found
+      security:
+        - JWT-auth: []
+      summary: Get single user by id
       tags:
-      - Users
+        - Users
     put:
+      description: Updates a user's password by ID
       operationId: UserController_updatePassword
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          description: User ID
+          schema:
+            format: uuid
+            type: string
       requestBody:
         required: true
         content:
@@ -80,42 +103,66 @@ paths:
               $ref: '#/components/schemas/UpdatePasswordDto'
       responses:
         '200':
-          description: ''
+          description: The user has been updated.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponseDto'
+        '400':
+          description: Bad request. userId is invalid (not uuid)
+        '403':
+          description: oldPassword is wrong
+        '404':
+          description: User not found
+      security:
+        - JWT-auth: []
+      summary: Update a user's password
       tags:
-      - Users
+        - Users
     delete:
+      description: Deletes user by ID.
       operationId: UserController_delete
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          description: User ID
+          schema:
+            format: uuid
+            type: string
       responses:
         '204':
-          description: ''
+          description: The user has been deleted
+        '400':
+          description: Bad request. userId is invalid (not uuid)
+        '404':
+          description: User not found
+      security:
+        - JWT-auth: []
+      summary: Delete user
       tags:
-      - Users
+        - Users
   /artist:
     get:
+      description: Gets all artists
       operationId: ArtistController_findAll
       parameters: []
       responses:
         '200':
-          description: ''
+          description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
+                  $ref: '#/components/schemas/Artist'
+      security:
+        - JWT-auth: []
+      summary: Get all artists
       tags:
-      - Artist
+        - Artist
     post:
+      description: Add new artist
       operationId: ArtistController_create
       parameters: []
       requestBody:
@@ -126,39 +173,57 @@ paths:
               $ref: '#/components/schemas/CreateArtistDto'
       responses:
         '201':
-          description: ''
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/Artist'
+        '400':
+          description: Bad request. body does not contain required fields
+      security:
+        - JWT-auth: []
+      summary: Add new artist
       tags:
-      - Artist
+        - Artist
   /artist/{id}:
     get:
+      description: Get single artist by id
       operationId: ArtistController_findById
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          description: Artist ID
+          schema:
+            format: uuid
+            type: string
       responses:
         '200':
-          description: ''
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/Artist'
+        '400':
+          description: Bad request. artistId is invalid (not uuid)
+        '404':
+          description: Artist was not found.
+      security:
+        - JWT-auth: []
+      summary: Get single artist by id
       tags:
-      - Artist
+        - Artist
     put:
+      description: Update artist information by UUID
       operationId: ArtistController_update
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          description: Artist ID
+          schema:
+            format: uuid
+            type: string
       requestBody:
         required: true
         content:
@@ -167,26 +232,43 @@ paths:
               $ref: '#/components/schemas/UpdateArtistDto'
       responses:
         '200':
-          description: ''
+          description: The artist has been updated.
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/Artist'
+        '400':
+          description: Bad request. artistId is invalid (not uuid)
+        '404':
+          description: Artist was not found.
+      security:
+        - JWT-auth: []
+      summary: Update artist information
       tags:
-      - Artist
+        - Artist
     delete:
+      description: Delete artist from library
       operationId: ArtistController_delete
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          description: Artist ID
+          schema:
+            format: uuid
+            type: string
       responses:
         '204':
-          description: ''
+          description: Deleted successfully
+        '400':
+          description: Bad request. artistId is invalid (not uuid)
+        '404':
+          description: Artist was not found.
+      security:
+        - JWT-auth: []
+      summary: Delete artist
       tags:
-      - Artist
+        - Artist
   /album:
     get:
       operationId: AlbumController_findAll
@@ -199,9 +281,11 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
+                  $ref: '#/components/schemas/Album'
+      security:
+        - JWT-auth: []
       tags:
-      - Album
+        - Album
     post:
       operationId: AlbumController_create
       parameters: []
@@ -217,35 +301,39 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/Album'
+      security:
+        - JWT-auth: []
       tags:
-      - Album
+        - Album
   /album/{id}:
     get:
       operationId: AlbumController_findById
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '200':
           description: ''
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/Album'
+      security:
+        - JWT-auth: []
       tags:
-      - Album
+        - Album
     put:
       operationId: AlbumController_update
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -258,22 +346,26 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/Album'
+      security:
+        - JWT-auth: []
       tags:
-      - Album
+        - Album
     delete:
       operationId: AlbumController_delete
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '204':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
-      - Album
+        - Album
   /track:
     get:
       operationId: TrackController_findAll
@@ -286,9 +378,11 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
+                  $ref: '#/components/schemas/Track'
+      security:
+        - JWT-auth: []
       tags:
-      - Track
+        - Track
     post:
       operationId: TrackController_create
       parameters: []
@@ -304,35 +398,39 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/Track'
+      security:
+        - JWT-auth: []
       tags:
-      - Track
+        - Track
   /track/{id}:
     get:
       operationId: TrackController_findById
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '200':
           description: ''
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/Track'
+      security:
+        - JWT-auth: []
       tags:
-      - Track
+        - Track
     put:
       operationId: TrackController_update
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -345,22 +443,26 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/Track'
+      security:
+        - JWT-auth: []
       tags:
-      - Track
+        - Track
     delete:
       operationId: TrackController_delete
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '204':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
-      - Track
+        - Track
   /favs:
     get:
       operationId: FavoritesController_getFavorites
@@ -372,89 +474,180 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FavoritesResponseDto'
+      security:
+        - JWT-auth: []
       tags:
-      - Favorites
+        - Favorites
   /favs/track/{id}:
     post:
       operationId: FavoritesController_addTrack
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '201':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
-      - Favorites
+        - Favorites
     delete:
       operationId: FavoritesController_removeTrack
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '204':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
-      - Favorites
+        - Favorites
   /favs/album/{id}:
     post:
       operationId: FavoritesController_addAlbum
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '201':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
-      - Favorites
+        - Favorites
     delete:
       operationId: FavoritesController_removeAlbum
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '204':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
-      - Favorites
+        - Favorites
   /favs/artist/{id}:
     post:
       operationId: FavoritesController_addArtist
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '201':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
-      - Favorites
+        - Favorites
     delete:
       operationId: FavoritesController_removeArtist
       parameters:
-      - name: id
-        required: true
-        in: path
-        schema:
-          type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '204':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
-      - Favorites
+        - Favorites
+  /auth/signup:
+    post:
+      description: Create a new user account
+      operationId: AuthController_signup
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthCredentialsDto'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDto'
+        '400':
+          description: >-
+            Invalid input data (missing login or password, or they are not
+            strings)
+      summary: User signup
+      tags:
+        - Authentication
+  /auth/login:
+    post:
+      description: Authenticate user and get access/refresh tokens
+      operationId: AuthController_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthCredentialsDto'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponseDto'
+        '400':
+          description: >-
+            Invalid input data (missing login or password, or they are not
+            strings)
+        '403':
+          description: Authentication failed (user not found or password mismatch)
+      summary: User login
+      tags:
+        - Authentication
+  /auth/refresh:
+    post:
+      description: Get new access and refresh tokens using refresh token
+      operationId: AuthController_refresh
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshDto'
+      responses:
+        '200':
+          description: Tokens refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponseDto'
+        '401':
+          description: Invalid refresh token (missing refreshToken in body)
+        '403':
+          description: Authentication failed (refresh token is invalid or expired)
+      summary: Refresh tokens
+      tags:
+        - Authentication
 info:
   title: Home Library Service
   description: Home music library service
@@ -463,134 +656,317 @@ info:
 tags: []
 servers: []
 components:
+  securitySchemes:
+    JWT-auth:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      name: JWT
+      description: Enter JWT token
+      in: header
   schemas:
     UserResponseDto:
       type: object
       properties:
         id:
           type: string
+          description: User unique identifier
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
         login:
           type: string
+          description: User login name
+          example: TestUser
         password:
           type: string
+          writeOnly: true
         version:
           type: number
+          description: User version number, increments on update
+          example: 1
         createdAt:
           type: number
+          description: Timestamp of user creation
+          example: 1655000000
         updatedAt:
           type: number
+          description: Timestamp of last user update
+          example: 1655000000
       required:
-      - id
-      - login
-      - password
-      - version
-      - createdAt
-      - updatedAt
+        - id
+        - login
+        - password
+        - version
+        - createdAt
+        - updatedAt
     CreateUserDto:
       type: object
       properties:
         login:
           type: string
+          description: The user's login
+          example: TestUser
         password:
           type: string
+          description: The user's password
+          example: password123
       required:
-      - login
-      - password
+        - login
+        - password
     UpdatePasswordDto:
       type: object
       properties:
         oldPassword:
           type: string
+          description: The user's old password
+          example: oldPassword123
         newPassword:
           type: string
+          description: The user's new password
+          example: newPassword123
       required:
-      - oldPassword
-      - newPassword
+        - oldPassword
+        - newPassword
+    Artist:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Artist unique identifier
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          type: string
+          description: Artist name
+          example: Freddie Mercury
+        grammy:
+          type: boolean
+          description: Whether the artist has won a Grammy award
+          example: false
+      required:
+        - id
+        - name
+        - grammy
     CreateArtistDto:
       type: object
       properties:
         name:
           type: string
+          description: The artist name
+          example: Freddie Mercury
         grammy:
           type: boolean
+          description: Whether the artist has won a Grammy
+          example: false
       required:
-      - name
-      - grammy
+        - name
+        - grammy
     UpdateArtistDto:
       type: object
       properties:
         name:
           type: string
+          description: The artist name
+          example: Freddie Mercury
         grammy:
           type: boolean
+          description: Whether the artist has won a Grammy
+          example: false
+    Album:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Album unique identifier
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          type: string
+          description: Album name
+          example: Innuendo
+        year:
+          type: number
+          description: Album release year
+          example: 1991
+        artistId:
+          type: string
+          nullable: true
+          description: ID of the artist who created this album
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+      required:
+        - id
+        - name
+        - year
     CreateAlbumDto:
       type: object
       properties:
         name:
           type: string
+          description: The album name
+          example: Innuendo
         year:
           type: number
+          description: The album release year
+          example: 1991
         artistId:
           type: string
           nullable: true
+          description: The ID of the artist who created this album
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
       required:
-      - name
-      - year
+        - name
+        - year
     UpdateAlbumDto:
       type: object
       properties:
         name:
           type: string
+          description: The album name
+          example: Innuendo
         year:
           type: number
+          description: The album release year
+          example: 1991
         artistId:
           type: string
           nullable: true
+          description: The ID of the artist who created this album
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Track unique identifier
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          type: string
+          description: Track name
+          example: The Show Must Go On
+        artistId:
+          type: string
+          nullable: true
+          description: ID of the artist who performed this track
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        albumId:
+          type: string
+          nullable: true
+          description: ID of the album this track belongs to
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        duration:
+          type: number
+          description: Track duration in seconds
+          example: 262
+      required:
+        - id
+        - name
+        - duration
     CreateTrackDto:
       type: object
       properties:
         name:
           type: string
+          description: The track name
+          example: The Show Must Go On
         artistId:
           type: string
           nullable: true
+          description: The ID of the artist who performed this track
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
         albumId:
           type: string
           nullable: true
+          description: The ID of the album this track belongs to
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440001
         duration:
           type: number
+          description: Track duration in seconds
+          example: 262
       required:
-      - name
-      - duration
+        - name
+        - duration
     UpdateTrackDto:
       type: object
       properties:
         name:
           type: string
+          description: The track name
+          example: Bohemian Rhapsody
         artistId:
           type: string
           nullable: true
+          description: The ID of the artist who performed this track
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
         albumId:
           type: string
           nullable: true
+          description: The ID of the album this track belongs to
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440001
         duration:
           type: number
+          description: Track duration in seconds
+          example: 355
     FavoritesResponseDto:
       type: object
       properties:
         artists:
           type: array
           items:
-            type: object
+            $ref: '#/components/schemas/Artist'
         albums:
           type: array
           items:
-            type: object
+            $ref: '#/components/schemas/Album'
         tracks:
           type: array
           items:
-            type: object
+            $ref: '#/components/schemas/Track'
       required:
-      - artists
-      - albums
-      - tracks
+        - artists
+        - albums
+        - tracks
+    AuthCredentialsDto:
+      type: object
+      properties:
+        login:
+          type: string
+          description: User login name
+          example: john_doe
+        password:
+          type: string
+          description: User password
+          example: SecurePassword123
+      required:
+        - login
+        - password
+    AuthResponseDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: JWT refresh token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      required:
+        - accessToken
+        - refreshToken
+    RefreshDto:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          description: Refresh token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...

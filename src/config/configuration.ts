@@ -22,4 +22,19 @@ export default () => ({
     database: process.env.POSTGRES_DB || 'database_name',
   },
   nodeEnv: process.env.NODE_ENV || 'development',
+  jwt: {
+    secretKey: process.env.JWT_SECRET_KEY || 'secret123123',
+    secretRefreshKey: process.env.JWT_SECRET_REFRESH_KEY || 'secret123123',
+    tokenExpireTime: process.env.TOKEN_EXPIRE_TIME || '1h',
+    tokenRefreshExpireTime: process.env.TOKEN_REFRESH_EXPIRE_TIME || '24h',
+  },
+  logging: {
+    level: process.env.LOG_LEVEL || 'log',
+    dir: process.env.LOG_DIR || 'logs',
+    maxSizeKb: (() => {
+      const size = parseInt(process.env.LOG_MAX_SIZE_KB, 10);
+      if (isNaN(size) || size <= 0) return 100;
+      return size;
+    })(),
+  },
 });

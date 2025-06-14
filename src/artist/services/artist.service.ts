@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaArtistRepository } from '../repositories/prisma-artist.repository';
-import { EventService, getEntityNotFoundMessage, getEntitySuccessMessage } from '../../common';
+import { getEntityNotFoundMessage, getEntitySuccessMessage } from '../../common';
 import { Artist } from '../entities/artist.entity';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
@@ -9,10 +9,7 @@ import { UpdateArtistDto } from '../dto/update-artist.dto';
 export class ArtistService {
   private readonly logger = new Logger(ArtistService.name);
 
-  constructor(
-    private readonly artistRepository: PrismaArtistRepository,
-    private readonly eventService: EventService,
-  ) {}
+  constructor(private readonly artistRepository: PrismaArtistRepository) {}
 
   async findAll(): Promise<Artist[]> {
     this.logger.log('Fetching all artists');
@@ -69,9 +66,6 @@ export class ArtistService {
     }
 
     await this.artistRepository.delete(id);
-
-    // Emit delete event for cascading operations
-    await this.eventService.emitArtistDeleted({ id });
 
     this.logger.log(getEntitySuccessMessage('Artist', 'deleted', id));
   }

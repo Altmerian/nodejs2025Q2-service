@@ -11,7 +11,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { UserService } from './services/user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -19,6 +19,7 @@ import { UserResponseDto } from './dto/user-response.dto';
 import { UuidValidationPipe } from '../common/pipes/uuid-validation.pipe';
 
 @ApiTags('Users')
+@ApiBearerAuth('JWT-auth')
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UserController {

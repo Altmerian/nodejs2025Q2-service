@@ -1,9 +1,13 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ReasonPhrases } from 'http-status-codes';
+import { LoggingService } from '../../logging/logging.service';
 
+@Injectable()
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  constructor(private readonly loggingService: LoggingService) {}
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -32,6 +36,19 @@ export class HttpExceptionFilter implements ExceptionFilter {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       message = ReasonPhrases.INTERNAL_SERVER_ERROR;
       error = ReasonPhrases.INTERNAL_SERVER_ERROR;
+    }
+
+    // Log the error
+    const errorMessage = `${request.method} ${request.url} - ${status} ${error}: ${message}`;
+    const context = 'HttpExceptionFilter';
+
+    if (status >= 500) {
+      // Log server errors as error level with stack trace
+      const stack = exception instanceof Error ? exception.stack : undefined;
+      this.loggingService.error(errorMessage, context, stack);
+    } else if (status >= 400) {
+      // Log client errors as warn level
+      this.loggingService.warn(errorMessage, context);
     }
 
     response.status(status).json({

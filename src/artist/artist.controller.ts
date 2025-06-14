@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { ArtistService } from './services/artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -7,6 +7,7 @@ import { Artist } from './entities/artist.entity';
 import { UuidValidationPipe } from '../common/pipes/uuid-validation.pipe';
 
 @ApiTags('Artist')
+@ApiBearerAuth('JWT-auth')
 @Controller('artist')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}

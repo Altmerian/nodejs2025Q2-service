@@ -48,6 +48,9 @@ RUN npm ci --only=production --no-audit --no-fund --no-optional && \
 # Copy built application from builder stage
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 
+# Create logs directory with proper ownership
+RUN mkdir -p logs && chown -R nodejs:nodejs logs
+
 # Switch to non-root user
 USER nodejs
 

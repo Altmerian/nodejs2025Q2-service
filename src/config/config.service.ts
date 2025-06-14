@@ -48,4 +48,32 @@ export class ConfigService {
   get isProduction(): boolean {
     return this.nodeEnv === 'production';
   }
+
+  get logLevel(): string {
+    return this.configService.getOrThrow<string>('logging.level');
+  }
+
+  get logDir(): string {
+    return this.configService.getOrThrow<string>('logging.dir');
+  }
+
+  get logMaxSizeKb(): number {
+    return this.configService.getOrThrow<number>('logging.maxSizeKb');
+  }
+
+  get jwtSecretKey(): string {
+    return this.configService.getOrThrow<string>('jwt.secretKey');
+  }
+
+  get jwtSecretRefreshKey(): string {
+    return this.configService.getOrThrow<string>('jwt.secretRefreshKey');
+  }
+
+  get tokenExpireTime(): string {
+    return this.configService.getOrThrow<string>('jwt.tokenExpireTime');
+  }
+
+  get tokenRefreshExpireTime(): string {
+    return this.configService.getOrThrow<string>('jwt.tokenRefreshExpireTime');
+  }
 }

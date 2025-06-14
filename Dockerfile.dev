@@ -21,6 +21,9 @@ COPY tsconfig*.json ./
 COPY nest-cli.json ./
 COPY src ./src
 
+# Create logs directory
+RUN mkdir -p logs
+
 # Expose application and debug ports
 EXPOSE 4000 9229
 
