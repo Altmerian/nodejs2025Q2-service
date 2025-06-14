@@ -74,6 +74,48 @@ After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
+### Using Swagger UI with Authentication
+1. Open http://localhost:4000/doc in your browser
+2. Use the **Authentication** endpoints to sign up and login:
+   - `POST /auth/signup` - Create a new user account
+   - `POST /auth/login` - Login and copy the `accessToken` from the response
+3. Click the **"Authorize"** button at the top of the Swagger page
+4. Paste the access token in the "Value" field (without "Bearer " prefix)
+5. Click **"Authorize"** and then **"Close"**
+6. Now you can test all protected endpoints directly from Swagger UI
+
+## Authentication & Authorization
+
+The service uses JWT (JSON Web Token) authentication for protecting endpoints.
+
+### Public Endpoints (No Authentication Required)
+- `GET /` - Root endpoint
+- `POST /auth/signup` - User registration
+- `POST /auth/login` - User login
+- `POST /auth/refresh` - Refresh tokens
+- `GET /doc` - Swagger documentation
+
+### Protected Endpoints (Authentication Required)
+All other endpoints require a valid JWT access token in the Authorization header:
+```
+Authorization: Bearer <jwt_token>
+```
+
+### Authentication Flow
+1. **Sign up**: Create a new user account via `POST /auth/signup`
+2. **Login**: Authenticate with credentials via `POST /auth/login` to receive access and refresh tokens
+3. **Access protected resources**: Include the access token in the Authorization header
+4. **Refresh tokens**: When access token expires, use refresh token via `POST /auth/refresh` to get new tokens
+
+### Token Configuration
+Configure JWT tokens in your `.env` file:
+```
+JWT_SECRET_KEY=your-secret-key
+JWT_SECRET_REFRESH_KEY=your-refresh-secret-key
+TOKEN_EXPIRE_TIME=1h
+TOKEN_REFRESH_EXPIRE_TIME=24h
+```
+
 ## API Documentation
 
 Folder [doc](doc) contains OpenAPI documentation in YAML format:
@@ -93,16 +135,29 @@ npm run build
 ### Prerequisites for Testing
 - Application must be running (use Docker or local setup)
 - Database should be in clean state for reliable test results
+- Authentication is now implemented - some tests require JWT tokens
 
 ### Test Commands
 
 ```bash
-# Run all tests without authorization
+# Run basic tests (these expect no authentication and will fail with 401 after auth implementation)
 npm run test
+
+# Run authentication tests (verify endpoints return 401 without tokens)
+npm run test:auth
+
+# Run refresh token tests
+npm run test:refresh
 
 # Run specific test suite
 npm run test -- <path to suite>
 ```
+
+### Test Structure
+- `test/*.e2e.spec.ts` - Basic endpoint tests (written before authentication)
+- `test/auth/*.e2e.spec.ts` - Authentication tests (verify 401 responses without tokens)
+
+**Note**: After implementing JWT authentication, the basic tests (`npm run test`) will fail with 401 errors because they don't include authentication tokens. This is expected behavior. The auth tests (`npm run test:auth`) verify that endpoints properly require authentication.
 
 ### Database Testing Notes
 
