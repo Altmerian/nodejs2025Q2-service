@@ -7,6 +7,7 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { User } from '../user/entities/user.entity';
+import { UserResponseDto } from '../user/dto/user-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,17 +20,16 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async signup(signupDto: AuthCredentialsDto): Promise<{ message: string }> {
+  async signup(signupDto: AuthCredentialsDto): Promise<UserResponseDto> {
     this.logger.log(`Creating new user account for login: ${signupDto.login}`);
 
-    // UserService already handles password hashing
-    await this.userService.create({
+    const user = await this.userService.create({
       login: signupDto.login,
       password: signupDto.password,
     });
 
     this.logger.log(`User account created successfully for login: ${signupDto.login}`);
-    return { message: 'User created successfully' };
+    return user;
   }
 
   async login(loginDto: AuthCredentialsDto): Promise<AuthResponseDto> {
@@ -59,8 +59,8 @@ export class AuthService {
     this.logger.log('Processing refresh token request');
 
     try {
-      // Verify refresh token
-      const payload = this.jwtService.verify(refreshDto.refreshToken, {
+      // Verify refresh token (we already validated it exists in controller)
+      const payload = this.jwtService.verify(refreshDto.refreshToken!, {
         secret: this.configService.jwtSecretRefreshKey,
       });
 

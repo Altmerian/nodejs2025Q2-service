@@ -33,7 +33,8 @@ There are two Docker Compose files:
 
 4. Run tests against the running containers:
    ```bash
-   npm run test
+   npm run test:auth
+   npm run test:refresh
    ```
 
 5. Stop the containers:
@@ -74,6 +75,10 @@ POSTGRES_PORT=5432
 
 # Security
 CRYPT_SALT=10
+JWT_SECRET_KEY=secret123123
+JWT_SECRET_REFRESH_KEY=secret123123
+TOKEN_EXPIRE_TIME=1h
+TOKEN_REFRESH_EXPIRE_TIME=24h
 ```
 
 ## Important Notes

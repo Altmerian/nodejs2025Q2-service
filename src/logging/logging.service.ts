@@ -91,6 +91,8 @@ export class LoggingService {
     const timestamp = this.getFileTimestamp();
     this.currentLogFile = path.join(this.logDir, `${timestamp}-app.log`);
     this.errorLogFile = path.join(this.logDir, 'error.log');
+
+    this.cleanupOldFiles();
   }
 
   private getFileTimestamp(): string {
@@ -153,10 +155,16 @@ export class LoggingService {
         }))
         .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
 
+      console.log(`Found ${files.length} app log files, max allowed: 10`);
+
       // Keep only the 10 most recent files
       if (files.length > 10) {
-        for (let i = 10; i < files.length; i++) {
-          fs.unlinkSync(files[i].path);
+        const filesToDelete = files.slice(10);
+        console.log(`Deleting ${filesToDelete.length} old log files`);
+
+        for (const file of filesToDelete) {
+          fs.unlinkSync(file.path);
+          console.log(`Deleted old log file: ${file.name}`);
         }
       }
     } catch (error) {

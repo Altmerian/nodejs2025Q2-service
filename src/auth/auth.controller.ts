@@ -1,4 +1,13 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -11,10 +20,12 @@ import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { UserResponseDto } from '../user/dto/user-response.dto';
 import { Public } from './decorators/public.decorator';
 
 @ApiTags('Authentication')
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -24,20 +35,12 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     description: 'User created successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        message: {
-          type: 'string',
-          example: 'User created successfully',
-        },
-      },
-    },
+    type: UserResponseDto,
   })
   @ApiBadRequestResponse({
     description: 'Invalid input data (missing login or password, or they are not strings)',
   })
-  async signup(@Body() signupDto: AuthCredentialsDto): Promise<{ message: string }> {
+  async signup(@Body() signupDto: AuthCredentialsDto): Promise<UserResponseDto> {
     return this.authService.signup(signupDto);
   }
 
@@ -76,6 +79,10 @@ export class AuthController {
     description: 'Authentication failed (refresh token is invalid or expired)',
   })
   async refresh(@Body() refreshDto: RefreshDto): Promise<AuthResponseDto> {
+    // Per requirements: return 401 if refreshToken is missing (not 400 from validation)
+    if (!refreshDto.refreshToken) {
+      throw new UnauthorizedException('Missing refresh token');
+    }
     return this.authService.refresh(refreshDto);
   }
 }

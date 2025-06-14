@@ -27,6 +27,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UserResponseDto'
+      security:
+        - JWT-auth: []
       summary: Get all users
       tags:
         - Users
@@ -49,6 +51,8 @@ paths:
                 $ref: '#/components/schemas/UserResponseDto'
         '400':
           description: Bad request. body does not contain required fields
+      security:
+        - JWT-auth: []
       summary: Create user
       tags:
         - Users
@@ -75,6 +79,8 @@ paths:
           description: Bad request. userId is invalid (not uuid)
         '404':
           description: User not found
+      security:
+        - JWT-auth: []
       summary: Get single user by id
       tags:
         - Users
@@ -108,6 +114,8 @@ paths:
           description: oldPassword is wrong
         '404':
           description: User not found
+      security:
+        - JWT-auth: []
       summary: Update a user's password
       tags:
         - Users
@@ -129,6 +137,8 @@ paths:
           description: Bad request. userId is invalid (not uuid)
         '404':
           description: User not found
+      security:
+        - JWT-auth: []
       summary: Delete user
       tags:
         - Users
@@ -146,6 +156,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Artist'
+      security:
+        - JWT-auth: []
       summary: Get all artists
       tags:
         - Artist
@@ -168,6 +180,8 @@ paths:
                 $ref: '#/components/schemas/Artist'
         '400':
           description: Bad request. body does not contain required fields
+      security:
+        - JWT-auth: []
       summary: Add new artist
       tags:
         - Artist
@@ -194,6 +208,8 @@ paths:
           description: Bad request. artistId is invalid (not uuid)
         '404':
           description: Artist was not found.
+      security:
+        - JWT-auth: []
       summary: Get single artist by id
       tags:
         - Artist
@@ -225,6 +241,8 @@ paths:
           description: Bad request. artistId is invalid (not uuid)
         '404':
           description: Artist was not found.
+      security:
+        - JWT-auth: []
       summary: Update artist information
       tags:
         - Artist
@@ -246,6 +264,8 @@ paths:
           description: Bad request. artistId is invalid (not uuid)
         '404':
           description: Artist was not found.
+      security:
+        - JWT-auth: []
       summary: Delete artist
       tags:
         - Artist
@@ -262,6 +282,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Album'
+      security:
+        - JWT-auth: []
       tags:
         - Album
     post:
@@ -280,6 +302,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Album'
+      security:
+        - JWT-auth: []
       tags:
         - Album
   /album/{id}:
@@ -298,6 +322,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Album'
+      security:
+        - JWT-auth: []
       tags:
         - Album
     put:
@@ -321,6 +347,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Album'
+      security:
+        - JWT-auth: []
       tags:
         - Album
     delete:
@@ -334,6 +362,8 @@ paths:
       responses:
         '204':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
         - Album
   /track:
@@ -349,6 +379,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Track'
+      security:
+        - JWT-auth: []
       tags:
         - Track
     post:
@@ -367,6 +399,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Track'
+      security:
+        - JWT-auth: []
       tags:
         - Track
   /track/{id}:
@@ -385,6 +419,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Track'
+      security:
+        - JWT-auth: []
       tags:
         - Track
     put:
@@ -408,6 +444,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Track'
+      security:
+        - JWT-auth: []
       tags:
         - Track
     delete:
@@ -421,6 +459,8 @@ paths:
       responses:
         '204':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
         - Track
   /favs:
@@ -434,6 +474,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FavoritesResponseDto'
+      security:
+        - JWT-auth: []
       tags:
         - Favorites
   /favs/track/{id}:
@@ -448,6 +490,8 @@ paths:
       responses:
         '201':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
         - Favorites
     delete:
@@ -461,6 +505,8 @@ paths:
       responses:
         '204':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
         - Favorites
   /favs/album/{id}:
@@ -475,6 +521,8 @@ paths:
       responses:
         '201':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
         - Favorites
     delete:
@@ -488,6 +536,8 @@ paths:
       responses:
         '204':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
         - Favorites
   /favs/artist/{id}:
@@ -502,6 +552,8 @@ paths:
       responses:
         '201':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
         - Favorites
     delete:
@@ -515,6 +567,8 @@ paths:
       responses:
         '204':
           description: ''
+      security:
+        - JWT-auth: []
       tags:
         - Favorites
   /auth/signup:
@@ -534,11 +588,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: User created successfully
+                $ref: '#/components/schemas/UserResponseDto'
         '400':
           description: >-
             Invalid input data (missing login or password, or they are not
@@ -606,6 +656,14 @@ info:
 tags: []
 servers: []
 components:
+  securitySchemes:
+    JWT-auth:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      name: JWT
+      description: Enter JWT token
+      in: header
   schemas:
     UserResponseDto:
       type: object
@@ -912,5 +970,3 @@ components:
           type: string
           description: Refresh token
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-      required:
-        - refreshToken
