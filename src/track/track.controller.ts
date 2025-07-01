@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Body,
-  Param,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TrackService } from './services/track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -38,10 +28,7 @@ export class TrackController {
   }
 
   @Put(':id')
-  async update(
-    @Param('id', UuidValidationPipe) id: string,
-    @Body() updateTrackDto: UpdateTrackDto,
-  ): Promise<Track> {
+  async update(@Param('id', UuidValidationPipe) id: string, @Body() updateTrackDto: UpdateTrackDto): Promise<Track> {
     return this.trackService.update(id, updateTrackDto);
   }
 

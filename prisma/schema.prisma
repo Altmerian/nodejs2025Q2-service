@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String @id @default(uuid())
+  login     String @unique
+  password  String
+  version   Int
+  createdAt BigInt
+  updatedAt BigInt
+  
+  @@map("users")
+}
+
+model Artist {
+  id     String  @id @default(uuid())
+  name   String
+  grammy Boolean
+  
+  // Relations
+  albums           Album[]           // One-to-many relation
+  tracks           Track[]           // One-to-many relation
+  favoriteArtists  FavoriteArtist[]  // Many-to-many relation with favorites
+  
+  @@map("artists")
+}
+
+model Album {
+  id       String  @id @default(uuid())
+  name     String
+  year     Int
+  artistId String? // Optional foreign key
+  
+  // Relations
+  artist         Artist?         @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  tracks         Track[]         // One-to-many relation
+  favoriteAlbums FavoriteAlbum[] // Many-to-many relation with favorites
+  
+  @@map("albums")
+}
+
+model Track {
+  id       String  @id @default(uuid())
+  name     String
+  duration Int
+  artistId String? // Optional foreign key
+  albumId  String? // Optional foreign key
+  
+  // Relations
+  artist         Artist?         @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  album          Album?          @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  favoriteTracks FavoriteTrack[] // Many-to-many relation with favorites
+  
+  @@map("tracks")
+}
+
+// Many-to-many relation tables for favorites
+model FavoriteArtist {
+  id       String  @id @default(uuid())
+  artistId String
+  artist   Artist  @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  
+  @@unique([artistId])
+  @@map("favorite_artists")
+}
+
+model FavoriteAlbum {
+  id      String @id @default(uuid())
+  albumId String
+  album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  
+  @@unique([albumId])
+  @@map("favorite_albums")
+}
+
+model FavoriteTrack {
+  id      String @id @default(uuid())
+  trackId String
+  track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  
+  @@unique([trackId])
+  @@map("favorite_tracks")
+}

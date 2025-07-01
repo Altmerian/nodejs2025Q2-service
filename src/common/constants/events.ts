@@ -16,7 +16,4 @@ export const EVENTS = {
 /**
  * Type-safe event names
  */
-export type EventName = 
-  | typeof EVENTS.ARTIST.DELETED
-  | typeof EVENTS.ALBUM.DELETED
-  | typeof EVENTS.TRACK.DELETED;
+export type EventName = typeof EVENTS.ARTIST.DELETED | typeof EVENTS.ALBUM.DELETED | typeof EVENTS.TRACK.DELETED;

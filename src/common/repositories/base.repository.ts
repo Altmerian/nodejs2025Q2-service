@@ -52,9 +52,7 @@ export interface IBaseRepository<T> {
  * Abstract base repository implementation for in-memory storage
  * @template T - Entity type that must have an 'id' property
  */
-export abstract class BaseInMemoryRepository<T extends { id: string }>
-  implements IBaseRepository<T>
-{
+export abstract class BaseInMemoryRepository<T extends { id: string }> implements IBaseRepository<T> {
   protected readonly storage: Map<string, T> = new Map();
 
   async findAll(): Promise<T[]> {

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
-import { ArtistRepository } from '../repositories/artist.repository';
+import { PrismaArtistRepository } from '../repositories/prisma-artist.repository';
 import { EventService, getEntityNotFoundMessage, getEntitySuccessMessage } from '../../common';
 import { Artist } from '../entities/artist.entity';
 import { CreateArtistDto } from '../dto/create-artist.dto';
@@ -10,7 +10,7 @@ export class ArtistService {
   private readonly logger = new Logger(ArtistService.name);
 
   constructor(
-    private readonly artistRepository: ArtistRepository,
+    private readonly artistRepository: PrismaArtistRepository,
     private readonly eventService: EventService,
   ) {}
 
@@ -34,7 +34,6 @@ export class ArtistService {
 
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     this.logger.log(`Creating new artist with name: ${createArtistDto.name}`);
-    
     const artistData: Omit<Artist, 'id'> = {
       name: createArtistDto.name,
       grammy: createArtistDto.grammy,
@@ -47,7 +46,6 @@ export class ArtistService {
 
   async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
     this.logger.log(`Updating artist with id: ${id}`);
-    
     const existingArtist = await this.artistRepository.findById(id);
     if (!existingArtist) {
       this.logger.warn(getEntityNotFoundMessage('Artist', id));
@@ -61,7 +59,6 @@ export class ArtistService {
 
   async delete(id: string): Promise<void> {
     this.logger.log(`Deleting artist with id: ${id}`);
-    
     const artist = await this.artistRepository.findById(id);
     if (!artist) {
       this.logger.warn(getEntityNotFoundMessage('Artist', id));
@@ -69,10 +66,10 @@ export class ArtistService {
     }
 
     await this.artistRepository.delete(id);
-    
+
     // Emit delete event for cascading operations
-    this.eventService.emitArtistDeleted({ id });
-    
+    await this.eventService.emitArtistDeleted({ id });
+
     this.logger.log(getEntitySuccessMessage('Artist', 'deleted', id));
   }
 }
