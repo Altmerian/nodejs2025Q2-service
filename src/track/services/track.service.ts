@@ -21,19 +21,16 @@ export class TrackService {
   async findById(id: string): Promise<Track> {
     this.logger.log(`Finding track with id: ${id}`);
     const track = await this.trackRepository.findById(id);
-
     if (!track) {
       this.logger.warn(`Track with id ${id} not found`);
       throw new NotFoundException(getEntityNotFoundMessage('Track', id));
     }
-
     this.logger.log(`Found track: ${track.name}`);
     return track;
   }
 
   async create(createTrackDto: CreateTrackDto): Promise<Track> {
     this.logger.log(`Creating new track: ${createTrackDto.name}`);
-
     const trackData: Omit<Track, 'id'> = {
       name: createTrackDto.name,
       duration: createTrackDto.duration,

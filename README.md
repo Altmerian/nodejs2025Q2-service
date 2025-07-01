@@ -208,6 +208,14 @@ Folder [doc](doc) contains OpenAPI documentation in YAML format:
 
 To generate documentation run:
 
+### Schema Management
+
+```bash
+# Generate Prisma client from schema
+npm run db:generate
+
+# Clean generated files (Prisma clients)
+npm run db:clean
 ```
 npm run build
 ```

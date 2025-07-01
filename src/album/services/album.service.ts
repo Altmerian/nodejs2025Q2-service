@@ -21,19 +21,16 @@ export class AlbumService {
   async findById(id: string): Promise<Album> {
     this.logger.log(`Finding album with id: ${id}`);
     const album = await this.albumRepository.findById(id);
-
     if (!album) {
       this.logger.warn(`Album with id ${id} not found`);
       throw new NotFoundException(getEntityNotFoundMessage('Album', id));
     }
-
     this.logger.log(`Found album: ${album.name}`);
     return album;
   }
 
   async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
     this.logger.log(`Creating new album: ${createAlbumDto.name}`);
-
     const albumData: Omit<Album, 'id'> = {
       name: createAlbumDto.name,
       year: createAlbumDto.year,
