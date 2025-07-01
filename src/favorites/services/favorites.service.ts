@@ -49,7 +49,6 @@ export class FavoritesService {
 
     // Add to favorites (repository handles duplicate check)
     const added = await this.favoritesRepository.addArtist(artistId);
-
     if (!added) {
       this.logger.log(`Artist ${artistId} already in favorites`);
     } else {
@@ -89,7 +88,6 @@ export class FavoritesService {
 
     // Add to favorites
     const added = await this.favoritesRepository.addAlbum(albumId);
-
     if (!added) {
       this.logger.log(`Album ${albumId} already in favorites`);
     } else {
@@ -129,7 +127,6 @@ export class FavoritesService {
 
     // Add to favorites
     const added = await this.favoritesRepository.addTrack(trackId);
-
     if (!added) {
       this.logger.log(`Track ${trackId} already in favorites`);
     } else {
