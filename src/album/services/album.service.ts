@@ -3,17 +3,13 @@ import { PrismaAlbumRepository } from '../repositories/prisma-album.repository';
 import { Album } from '../entities/album.entity';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 import { UpdateAlbumDto } from '../dto/update-album.dto';
-import { EventService } from '../../common/services/event.service';
 import { getEntityNotFoundMessage, getEntitySuccessMessage } from '../../common/constants/messages';
 
 @Injectable()
 export class AlbumService {
   private readonly logger = new Logger(AlbumService.name);
 
-  constructor(
-    private readonly albumRepository: PrismaAlbumRepository,
-    private readonly eventService: EventService,
-  ) {}
+  constructor(private readonly albumRepository: PrismaAlbumRepository) {}
 
   async findAll(): Promise<Album[]> {
     this.logger.log('Finding all albums');
@@ -72,8 +68,6 @@ export class AlbumService {
     await this.findById(id); // Verify album exists
 
     await this.albumRepository.delete(id);
-
-    await this.eventService.emitAlbumDeleted({ id });
 
     this.logger.log(getEntitySuccessMessage('Album', 'deleted', id));
   }
